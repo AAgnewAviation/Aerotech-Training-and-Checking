@@ -72,6 +72,9 @@ body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:1
 .checklist td.sub{padding-left:20px;color:var(--text2)}
 .checklist td:last-child{text-align:center;vertical-align:middle}
 .checklist tr.grp td{font-weight:600;font-size:13px;background:var(--bg2);padding-top:10px}
+.grp-row-flex{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.select-all-btn{font-size:11px;font-weight:500;padding:4px 10px;border-radius:20px;border:1px solid var(--green);color:var(--green);background:var(--green-bg);cursor:pointer;white-space:nowrap;font-family:var(--font)}
+.select-all-btn:active{opacity:.7}
 .chk{font-size:13px;padding:5px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);width:76px;-webkit-appearance:none;appearance:none;text-align:center;cursor:pointer}
 .chk.c{border-color:var(--green);color:var(--green);background:var(--green-bg)}
 .chk.nyc{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
@@ -147,10 +150,7 @@ canvas.sigpad{width:100%;height:80px;border:1px dashed var(--border2);border-rad
 
 <div class="tabs">
   <div class="tab active" onclick="showTab('details')" id="tab-details">Details</div>
-  <div class="tab" onclick="showTab('knowledge')" id="tab-knowledge">Knowledge</div>
-  <div class="tab" onclick="showTab('flight')" id="tab-flight">Flight</div>
-  <div class="tab" onclick="showTab('emergency')" id="tab-emergency">Emergency</div>
-  <div class="tab" onclick="showTab('nontech')" id="tab-nontech">Non-Tech</div>
+  <div class="tab" onclick="showTab('syllabus')" id="tab-syllabus">Syllabus</div>
   <div class="tab" onclick="showTab('sign')" id="tab-sign">Sign</div>
 </div>
 
@@ -201,8 +201,8 @@ canvas.sigpad{width:100%;height:80px;border:1px dashed var(--border2);border-rad
   </div>
 </div>
 
-<!-- KNOWLEDGE -->
-<div class="page" id="page-knowledge">
+<!-- SYLLABUS -->
+<div class="page" id="page-syllabus">
   <div class="card">
     <div class="card-header"><h2>Knowledge requirements</h2></div>
     <table class="checklist">
@@ -210,79 +210,71 @@ canvas.sigpad{width:100%;height:80px;border:1px dashed var(--border2);border-rad
       <tbody>
         <tr><td>Fatigue management limitations - CAO 48.1</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
         <tr><td>Company operations manual - Operations Manual</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">IFR / VFR knowledge requirements</td></tr>
-        <tr><td class="sub">Privileges and limitations</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Proficiency check requirements</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">IFR and approach recency requirements</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Interpreting operational and meteorological information</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Application of takeoff minima</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Alternate / holding requirements</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">IFR or VFR procedures for all airspace categories</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Departure and approach instrument procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Operations below LSALT / MSA for day and night operations</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">GNSS and PBN standards</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Requirements for circling approaches</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Adverse weather conditions</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">IFR planning or VFR planning</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>IFR / VFR knowledge requirements</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('ifr-vfr')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Privileges and limitations</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Proficiency check requirements</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">IFR and approach recency requirements</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Interpreting operational and meteorological information</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Application of takeoff minima</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Alternate / holding requirements</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">IFR or VFR procedures for all airspace categories</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Departure and approach instrument procedures</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Operations below LSALT / MSA for day and night operations</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">GNSS and PBN standards</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Requirements for circling approaches</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Adverse weather conditions</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">IFR planning or VFR planning</td><td><select class="chk" data-check data-group="ifr-vfr" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
       </tbody>
     </table>
   </div>
-</div>
-
-<!-- FLIGHT -->
-<div class="page" id="page-flight">
   <div class="card">
     <div class="card-header"><h2>Flight component</h2></div>
     <table class="checklist">
       <thead><tr><th>Check item</th><th>Result</th></tr></thead>
       <tbody>
-        <tr class="grp"><td colspan="2">Pre-flight</td></tr>
-        <tr><td class="sub">Flight planning accurate and complete</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Performance knowledge and application</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Perform pre-flight actions and procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">Ground operations, take-off, departure and climb</td></tr>
-        <tr><td class="sub">Complete all relevant checks and procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Plan, brief and conduct take-off and departure procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct instrument departure</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct an engine failure below turnback height</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct an engine failure above turnback height</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">Enroute cruise</td></tr>
-        <tr><td class="sub">Navigate aircraft enroute using ground and satellite navigation systems</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Perform navigation systems integrity checks</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Identify and avoid hazardous weather</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Use correct radio procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Manage relevant aircraft systems</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Manage fuel system and monitor fuel plan and usage</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct glide approach to landing</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">Activities and manoeuvres</td></tr>
-        <tr><td class="sub">Perform full and limited panel instrument flying</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Unusual attitude recovery</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Engine failure drill</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">General aircraft handling</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">Descent and arrival</td></tr>
-        <tr><td class="sub">Perform a descent or published arrival procedure to the aerodrome</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Track to the holding fix and conduct holding pattern or sector entry</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">2D approach</td></tr>
-        <tr><td class="sub">Prepare for the approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct missed approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">3D approach</td></tr>
-        <tr><td class="sub">Prepare for the approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Conduct missed approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">Circuit, approach and landing</td></tr>
-        <tr><td class="sub">Conduct visual circling with at least 90-degree heading change</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Approach stable IAW company procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr><td class="sub">Perform after landing actions and procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
-        <tr class="grp"><td colspan="2">Shutdown and post flight</td></tr>
-        <tr><td class="sub">Park, shutdown and complete post-flight administration</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Pre-flight</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('pre-flight')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Flight planning accurate and complete</td><td><select class="chk" data-check data-group="pre-flight" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Performance knowledge and application</td><td><select class="chk" data-check data-group="pre-flight" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Perform pre-flight actions and procedures</td><td><select class="chk" data-check data-group="pre-flight" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Ground operations, take-off, departure and climb</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('ground-ops')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Complete all relevant checks and procedures</td><td><select class="chk" data-check data-group="ground-ops" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Plan, brief and conduct take-off and departure procedures</td><td><select class="chk" data-check data-group="ground-ops" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct instrument departure</td><td><select class="chk" data-check data-group="ground-ops" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct an engine failure below turnback height</td><td><select class="chk" data-check data-group="ground-ops" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct an engine failure above turnback height</td><td><select class="chk" data-check data-group="ground-ops" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Enroute cruise</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('enroute')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Navigate aircraft enroute using ground and satellite navigation systems</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Perform navigation systems integrity checks</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Identify and avoid hazardous weather</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Use correct radio procedures</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Manage relevant aircraft systems</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Manage fuel system and monitor fuel plan and usage</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct glide approach to landing</td><td><select class="chk" data-check data-group="enroute" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Activities and manoeuvres</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('activities')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Perform full and limited panel instrument flying</td><td><select class="chk" data-check data-group="activities" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Unusual attitude recovery</td><td><select class="chk" data-check data-group="activities" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Engine failure drill</td><td><select class="chk" data-check data-group="activities" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">General aircraft handling</td><td><select class="chk" data-check data-group="activities" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Descent and arrival</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('descent')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Perform a descent or published arrival procedure to the aerodrome</td><td><select class="chk" data-check data-group="descent" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Track to the holding fix and conduct holding pattern or sector entry</td><td><select class="chk" data-check data-group="descent" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>2D approach</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('2d-approach')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Prepare for the approach</td><td><select class="chk" data-check data-group="2d-approach" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct approach</td><td><select class="chk" data-check data-group="2d-approach" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct missed approach</td><td><select class="chk" data-check data-group="2d-approach" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>3D approach</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('3d-approach')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Prepare for the approach</td><td><select class="chk" data-check data-group="3d-approach" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct approach</td><td><select class="chk" data-check data-group="3d-approach" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct missed approach</td><td><select class="chk" data-check data-group="3d-approach" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Circuit, approach and landing</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('circuit')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Conduct visual circling with at least 90-degree heading change</td><td><select class="chk" data-check data-group="circuit" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Approach stable IAW company procedures</td><td><select class="chk" data-check data-group="circuit" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Perform after landing actions and procedures</td><td><select class="chk" data-check data-group="circuit" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2"><div class="grp-row-flex"><span>Shutdown and post flight</span><button class="select-all-btn" type="button" onclick="selectAllCompetent('shutdown')">Select all competent</button></div></td></tr>
+        <tr><td class="sub">Park, shutdown and complete post-flight administration</td><td><select class="chk" data-check data-group="shutdown" onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
       </tbody>
     </table>
   </div>
-</div>
-
-<!-- EMERGENCY -->
-<div class="page" id="page-emergency">
   <div class="card">
     <div class="card-header"><h2>Emergency procedures</h2></div>
     <table class="checklist">
@@ -299,10 +291,6 @@ canvas.sigpad{width:100%;height:80px;border:1px dashed var(--border2);border-rad
       </tbody>
     </table>
   </div>
-</div>
-
-<!-- NONTECH -->
-<div class="page" id="page-nontech">
   <div class="card">
     <div class="card-header"><h2>Non-technical skills</h2></div>
     <table class="checklist">
@@ -320,6 +308,7 @@ canvas.sigpad{width:100%;height:80px;border:1px dashed var(--border2);border-rad
     </table>
   </div>
 </div>
+
 
 <!-- SIGN -->
 <div class="page" id="page-sign">
@@ -423,6 +412,15 @@ function styleChk(el){
   if(el.value==='C')el.classList.add('c');
   else if(el.value==='NYC')el.classList.add('nyc');
   else if(el.value==='NA')el.classList.add('na');
+}
+
+function selectAllCompetent(groupId){
+  var selects=document.querySelectorAll('[data-group="'+groupId+'"]');
+  selects.forEach(function(sel){
+    sel.value='C';
+    styleChk(sel);
+  });
+  updateProgress();
 }
 
 function updateProgress(){
