@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>Operator Proficiency Check — AeroTech</title>
+
+<!-- PWA manifest -->
+<link rel="manifest" href="../manifest.json">
+<meta name="theme-color" content="#1a6ef5">
+
+<!-- iOS install support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AeroTech Forms">
+<link rel="apple-touch-icon" href="../icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="../icons/icon-192.png">
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f7;--bg3:#ebebed;
+  --text:#1a1a1a;--text2:#6e6e73;--text3:#aeaeb2;
+  --border:#e0e0e2;--border2:#c8c8ca;
+  --accent:#1a6ef5;--accent-bg:#eaf0fe;
+  --green:#2d8a4e;--green-bg:#eaf4ee;
+  --amber:#b45309;--amber-bg:#fef3e2;
+  --radius:10px;--radius-sm:7px;
+  --font:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+    --text:#f2f2f7;--text2:#aeaeb2;--text3:#636366;
+    --border:#3a3a3c;--border2:#48484a;
+    --accent:#4d90fe;--accent-bg:#1a2a4a;
+    --green:#34c759;--green-bg:#0f2e1a;
+    --amber:#f59e0b;--amber-bg:#2a1e08;
+  }
+}
+body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:15px;min-height:100vh}
+.nav{background:var(--bg);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-logo svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-title{font-size:15px;font-weight:600}
+.nav-sub{font-size:11px;color:var(--text2)}
+.nav-right{display:flex;gap:8px}
+.icon-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.tabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border);overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tab{flex:1;min-width:72px;padding:12px 6px;text-align:center;font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;white-space:nowrap}
+.tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.page{display:none;padding:14px;padding-bottom:90px}
+.page.active{display:block}
+.card{background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
+.card-header{padding:12px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.card-header h2{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.card-body{padding:14px}
+.form-row{display:flex;gap:10px;margin-bottom:10px}
+.form-row:last-child{margin-bottom:0}
+.fg{display:flex;flex-direction:column;gap:4px;flex:1}
+.fg label{font-size:12px;font-weight:500;color:var(--text2)}
+.fg input,.fg select,.fg textarea{font-size:15px;padding:9px 11px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);width:100%;font-family:var(--font);outline:none;-webkit-appearance:none;appearance:none}
+.fg input:focus,.fg select:focus,.fg textarea:focus{border-color:var(--accent)}
+.fg textarea{min-height:90px;resize:vertical;line-height:1.5}
+.checklist{width:100%;border-collapse:collapse}
+.checklist th{font-size:11px;font-weight:600;color:var(--text2);padding:7px 10px;text-align:left;background:var(--bg2);text-transform:uppercase;letter-spacing:.04em}
+.checklist th:last-child{text-align:center;width:82px}
+.checklist td{padding:9px 10px;font-size:13px;border-top:1px solid var(--border);color:var(--text);vertical-align:top;line-height:1.45}
+.checklist td.sub{padding-left:20px;color:var(--text2)}
+.checklist td:last-child{text-align:center;vertical-align:middle}
+.checklist tr.grp td{font-weight:600;font-size:13px;background:var(--bg2);padding-top:10px}
+.chk{font-size:13px;padding:5px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg);color:var(--text);width:76px;-webkit-appearance:none;appearance:none;text-align:center;cursor:pointer}
+.chk.c{border-color:var(--green);color:var(--green);background:var(--green-bg)}
+.chk.nyc{border-color:var(--amber);color:var(--amber);background:var(--amber-bg)}
+.chk.na{color:var(--text3)}
+.ac-toggle{display:flex;background:var(--bg2);border-radius:8px;padding:2px}
+.ac-btn{padding:5px 12px;border-radius:6px;border:none;background:transparent;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer}
+.ac-btn.active{background:var(--bg);color:var(--accent);box-shadow:0 1px 3px rgba(0,0,0,.12)}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:480px){.sig-grid{grid-template-columns:1fr}}
+.sig-box{border:1px solid var(--border);border-radius:var(--radius-sm);padding:12px}
+.sig-box h3{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:8px;text-transform:uppercase;letter-spacing:.05em}
+.sig-mode{display:flex;gap:4px;margin-bottom:8px}
+.smb{padding:3px 12px;border-radius:20px;border:1px solid var(--border2);font-size:12px;font-weight:500;cursor:pointer;background:transparent;color:var(--text2);font-family:var(--font)}
+.smb.active{background:var(--accent);color:#fff;border-color:var(--accent)}
+canvas.sigpad{width:100%;height:80px;border:1px dashed var(--border2);border-radius:var(--radius-sm);cursor:crosshair;background:var(--bg2);display:block;touch-action:none}
+.sig-type-in{width:100%;padding:8px;border:1px dashed var(--border2);border-radius:var(--radius-sm);font-size:22px;font-style:italic;font-family:Georgia,serif;text-align:center;background:var(--bg2);color:var(--text);outline:none}
+.sig-meta{margin-top:8px;display:flex;flex-direction:column;gap:6px}
+.sig-meta input{font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);font-family:var(--font);outline:none;width:100%}
+.sig-clear{font-size:11px;color:var(--text3);cursor:pointer;background:none;border:none;padding:2px 0;text-decoration:underline;font-family:var(--font)}
+.cert-note{background:var(--bg2);border-radius:var(--radius-sm);padding:12px 14px;font-size:13px;color:var(--text2);line-height:1.6;margin-bottom:14px}
+.action-bar{position:fixed;bottom:0;left:0;right:0;background:var(--bg);border-top:1px solid var(--border);padding:10px 14px;display:flex;gap:10px;z-index:50}
+.btn{display:flex;align-items:center;justify-content:center;gap:7px;padding:13px 16px;border-radius:var(--radius-sm);border:1px solid var(--border2);background:transparent;font-size:14px;font-weight:600;cursor:pointer;color:var(--text);font-family:var(--font);flex:1;-webkit-appearance:none}
+.btn-primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.btn-secondary{background:var(--bg2)}
+.btn svg{width:17px;height:17px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.setting-card{background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:12px}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-top:1px solid var(--border);gap:12px}
+.set-row:first-child{border-top:none}
+.set-label{font-size:14px;color:var(--text);flex-shrink:0}
+.set-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.set-row input{font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);width:200px;font-family:var(--font);outline:none;-webkit-appearance:none}
+@media(max-width:500px){.set-row{flex-direction:column;align-items:flex-start}.set-row input{width:100%}}
+.saved-msg{font-size:12px;color:var(--green);text-align:center;padding:8px;display:none}
+.install-steps{font-size:13px;color:var(--text2);line-height:2;padding:14px}
+.install-steps b{color:var(--text)}
+.modal-bg{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:200;align-items:flex-end;justify-content:center}
+.modal-bg.open{display:flex}
+.modal{background:var(--bg);border-radius:16px 16px 0 0;padding:22px;width:100%;max-width:500px}
+.modal h2{font-size:16px;font-weight:700;margin-bottom:6px}
+.modal p{font-size:13px;color:var(--text2);margin-bottom:18px;line-height:1.6}
+.modal-btns{display:flex;flex-direction:column;gap:8px}
+.modal-btns .btn{flex:none}
+.prog-bar-wrap{display:flex;align-items:center;gap:10px;padding:10px 14px;background:var(--bg);border-top:1px solid var(--border);margin-top:-1px}
+.prog-bar{flex:1;height:4px;background:var(--bg3);border-radius:2px;overflow:hidden}
+.prog-fill{height:100%;border-radius:2px;background:var(--accent);transition:width .3s}
+.prog-pct{font-size:12px;font-weight:600;color:var(--text2);min-width:28px;text-align:right}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <button class="icon-btn" onclick="window.location.href='../index.html'" title="Back to home" style="margin-right:2px">
+      <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6"/></svg>
+    </button>
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="nav-title">Operator Proficiency Check</div>
+      <div class="nav-sub">Operations</div>
+    </div>
+  </div>
+  <div class="nav-right">
+    <button class="icon-btn" onclick="openModal()" title="Send via Mail">
+      <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+    </button>
+    <button class="icon-btn" onclick="window.location.href='../index.html?tab=settings'" title="Settings">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    </button>
+  </div>
+</nav>
+
+<div class="tabs">
+  <div class="tab active" onclick="showTab('details')" id="tab-details">Details</div>
+  <div class="tab" onclick="showTab('knowledge')" id="tab-knowledge">Knowledge</div>
+  <div class="tab" onclick="showTab('flight')" id="tab-flight">Flight</div>
+  <div class="tab" onclick="showTab('emergency')" id="tab-emergency">Emergency</div>
+  <div class="tab" onclick="showTab('nontech')" id="tab-nontech">Non-Tech</div>
+  <div class="tab" onclick="showTab('sign')" id="tab-sign">Sign</div>
+</div>
+
+<!-- DETAILS -->
+<div class="page active" id="page-details">
+  <div class="card">
+    <div class="card-header">
+      <h2>Candidate details</h2>
+      <div class="ac-toggle">
+        <button class="ac-btn active" onclick="setAC('C208',this)">C208</button>
+        <button class="ac-btn" onclick="setAC('PC12',this)">PC12</button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="form-row">
+        <div class="fg"><label>Full name</label><input type="text" id="trainee-name" placeholder="e.g. Jordan Mitchell" oninput="updateProgress()"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>ARN</label><input type="text" id="arn" placeholder="e.g. 1234567" inputmode="numeric" pattern="[0-9]*" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,7); updateProgress();"></div>
+        <div class="fg"><label>Aircraft registration</label><input type="text" id="aircraft-reg" placeholder="e.g. VH-ABC" oninput="updateProgress()"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Ground time</label><input type="text" id="ground-time" placeholder="e.g. 1.5" inputmode="decimal" oninput="updateProgress()"></div>
+        <div class="fg"><label>Flight time</label><input type="text" id="flight-time" placeholder="e.g. 2.3" inputmode="decimal" oninput="updateProgress()"></div>
+      </div>
+      <div class="form-row">
+        <div class="fg"><label>Initial or recurrent</label>
+          <select id="training-type" onchange="updateProgress()">
+            <option value="">Select...</option>
+            <option>Initial</option>
+            <option>Recurrent</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-body">
+      <div class="fg"><label>Comments</label><textarea id="comments" placeholder="Any additional comments or observations..."></textarea></div>
+    </div>
+  </div>
+  <div class="card" style="overflow:visible">
+    <div class="prog-bar-wrap">
+      <span style="font-size:12px;color:var(--text2);flex-shrink:0">Form progress</span>
+      <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+      <span class="prog-pct" id="prog-pct">0%</span>
+    </div>
+  </div>
+</div>
+
+<!-- KNOWLEDGE -->
+<div class="page" id="page-knowledge">
+  <div class="card">
+    <div class="card-header"><h2>Knowledge requirements</h2></div>
+    <table class="checklist">
+      <thead><tr><th>Check item</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Fatigue management limitations - CAO 48.1</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Company operations manual - Operations Manual</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">IFR / VFR knowledge requirements</td></tr>
+        <tr><td class="sub">Privileges and limitations</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Proficiency check requirements</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">IFR and approach recency requirements</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Interpreting operational and meteorological information</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Application of takeoff minima</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Alternate / holding requirements</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">IFR or VFR procedures for all airspace categories</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Departure and approach instrument procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Operations below LSALT / MSA for day and night operations</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">GNSS and PBN standards</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Requirements for circling approaches</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Adverse weather conditions</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">IFR planning or VFR planning</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- FLIGHT -->
+<div class="page" id="page-flight">
+  <div class="card">
+    <div class="card-header"><h2>Flight component</h2></div>
+    <table class="checklist">
+      <thead><tr><th>Check item</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr class="grp"><td colspan="2">Pre-flight</td></tr>
+        <tr><td class="sub">Flight planning accurate and complete</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Performance knowledge and application</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Perform pre-flight actions and procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">Ground operations, take-off, departure and climb</td></tr>
+        <tr><td class="sub">Complete all relevant checks and procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Plan, brief and conduct take-off and departure procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct instrument departure</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct an engine failure below turnback height</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct an engine failure above turnback height</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">Enroute cruise</td></tr>
+        <tr><td class="sub">Navigate aircraft enroute using ground and satellite navigation systems</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Perform navigation systems integrity checks</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Identify and avoid hazardous weather</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Use correct radio procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Manage relevant aircraft systems</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Manage fuel system and monitor fuel plan and usage</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct glide approach to landing</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">Activities and manoeuvres</td></tr>
+        <tr><td class="sub">Perform full and limited panel instrument flying</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Unusual attitude recovery</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Engine failure drill</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">General aircraft handling</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">Descent and arrival</td></tr>
+        <tr><td class="sub">Perform a descent or published arrival procedure to the aerodrome</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Track to the holding fix and conduct holding pattern or sector entry</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">2D approach</td></tr>
+        <tr><td class="sub">Prepare for the approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct missed approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">3D approach</td></tr>
+        <tr><td class="sub">Prepare for the approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Conduct missed approach</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">Circuit, approach and landing</td></tr>
+        <tr><td class="sub">Conduct visual circling with at least 90-degree heading change</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Approach stable IAW company procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td class="sub">Perform after landing actions and procedures</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr class="grp"><td colspan="2">Shutdown and post flight</td></tr>
+        <tr><td class="sub">Park, shutdown and complete post-flight administration</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- EMERGENCY -->
+<div class="page" id="page-emergency">
+  <div class="card">
+    <div class="card-header"><h2>Emergency procedures</h2></div>
+    <table class="checklist">
+      <thead><tr><th>Check item</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Engines, propeller, and fuel</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Electrical</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Fire or smoke</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Flight controls and stall warning</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Navigation and flight instruments</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Passenger evacuation and emergency landings</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Cabin or cargo door warning</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Abnormal and emergency passenger PAs</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- NONTECH -->
+<div class="page" id="page-nontech">
+  <div class="card">
+    <div class="card-header"><h2>Non-technical skills</h2></div>
+    <table class="checklist">
+      <thead><tr><th>Check item</th><th>Result</th></tr></thead>
+      <tbody>
+        <tr><td>Communication</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Situational awareness</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Threat and error management</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Decision making</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Workload management</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Task management</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Monitoring and cross-checking</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+        <tr><td>Fatigue management</td><td><select class="chk" data-check onchange="styleChk(this);updateProgress()"><option value="">—</option><option>C</option><option>NYC</option><option>NA</option></select></td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- SIGN -->
+<div class="page" id="page-sign">
+  <div class="cert-note">This is to certify that the above-named person has completed the operator proficiency check for Part 135/138 operations.</div>
+  <div class="sig-grid">
+    <div class="sig-box">
+      <h3>Check Pilot</h3>
+      <div class="sig-mode">
+        <button class="smb active" onclick="setSigMode('inst','draw',this)">Draw</button>
+        <button class="smb" onclick="setSigMode('inst','type',this)">Type</button>
+      </div>
+      <canvas class="sigpad" id="inst-canvas" width="600" height="160"></canvas>
+      <input type="text" class="sig-type-in" id="inst-type" style="display:none" placeholder="Type name to sign">
+      <div class="sig-meta">
+        <input type="text" id="inst-name" placeholder="Printed name">
+        <input type="text" id="inst-arn" placeholder="Check Pilot ARN (7 digits)" inputmode="numeric" pattern="[0-9]*" maxlength="7" oninput="this.value=this.value.replace(/[^0-9]/g,'').slice(0,7);">
+        <input type="date" id="inst-date">
+        <button class="sig-clear" onclick="clearSig('inst')">Clear signature</button>
+      </div>
+    </div>
+    <div class="sig-box">
+      <h3>Candidate</h3>
+      <div class="sig-mode">
+        <button class="smb active" onclick="setSigMode('ts','draw',this)">Draw</button>
+        <button class="smb" onclick="setSigMode('ts','type',this)">Type</button>
+      </div>
+      <canvas class="sigpad" id="ts-canvas" width="600" height="160"></canvas>
+      <input type="text" class="sig-type-in" id="ts-type" style="display:none" placeholder="Type name to sign">
+      <div class="sig-meta">
+        <input type="text" id="ts-name" placeholder="Printed name">
+        <input type="date" id="ts-date">
+        <button class="sig-clear" onclick="clearSig('ts')">Clear signature</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ACTION BAR -->
+<div class="action-bar">
+  <button class="btn btn-secondary" onclick="exportPDF()">
+    <svg viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    Export PDF
+  </button>
+  <button class="btn btn-primary" onclick="openModal()">
+    <svg viewBox="0 0 24 24"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+    Send via Mail
+  </button>
+</div>
+
+<!-- MODAL -->
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <h2>Send via Mail</h2>
+    <p>This will save the PDF to your Downloads folder and open Mail with your saved recipients and subject pre-filled. Attach the PDF before sending.</p>
+    <div class="modal-btns">
+      <button class="btn btn-primary" onclick="doSend()">Save PDF &amp; Open Mail</button>
+      <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script>
+var aircraft='C208';
+var sigStates={inst:{mode:'draw',drawing:false,drawn:false},ts:{mode:'draw',drawing:false,drawn:false}};
+
+// Reads from the shared global settings (set on the home page) rather than its own copy
+function loadGlobalSettings(){
+  try{
+    return JSON.parse(localStorage.getItem('aerotech_global_settings')||'{}');
+  }catch(e){return {};}
+}
+function applyPrefill(){
+  var s = loadGlobalSettings();
+  // Prefill instructor name if set globally and field is currently empty
+  if(s.instructorName && !v('inst-name')) document.getElementById('inst-name').value = s.instructorName;
+  if(s.instructorArn && !v('inst-arn')) document.getElementById('inst-arn').value = s.instructorArn;
+  if(s.companyName){
+    var sub = document.querySelector('.nav-sub');
+    if(sub) sub.textContent = s.companyName;
+  }
+}
+applyPrefill();
+
+function v(id){return(document.getElementById(id)||{}).value||'';}
+
+function setAC(ac,btn){
+  aircraft=ac;
+  document.querySelectorAll('.ac-btn').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+}
+
+function showTab(name){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.tab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('tab-'+name).classList.add('active');
+}
+
+function styleChk(el){
+  el.className='chk';
+  if(el.value==='C')el.classList.add('c');
+  else if(el.value==='NYC')el.classList.add('nyc');
+  else if(el.value==='NA')el.classList.add('na');
+}
+
+function updateProgress(){
+  var checks=document.querySelectorAll('[data-check]');
+  var filled=Array.from(checks).filter(function(s){return s.value;}).length;
+  var total=checks.length;
+  var hasName=v('trainee-name').trim().length>0;
+  var hasType=v('training-type').length>0;
+  var score=Math.round(((hasName?1:0)+(hasType?0.5:0)+(filled/total)*2.5)/4*100);
+  document.getElementById('prog-fill').style.width=score+'%';
+  document.getElementById('prog-pct').textContent=score+'%';
+}
+
+function initPad(id){
+  var canvas=document.getElementById(id+'-canvas');
+  var ctx=canvas.getContext('2d');
+  var s=sigStates[id];
+  ctx.strokeStyle='#111';ctx.lineWidth=2.5;ctx.lineCap='round';ctx.lineJoin='round';
+  function pos(e){
+    var r=canvas.getBoundingClientRect();
+    var sx=canvas.width/r.width,sy=canvas.height/r.height;
+    if(e.touches)return{x:(e.touches[0].clientX-r.left)*sx,y:(e.touches[0].clientY-r.top)*sy};
+    return{x:(e.clientX-r.left)*sx,y:(e.clientY-r.top)*sy};
+  }
+  canvas.addEventListener('mousedown',function(e){s.drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);});
+  canvas.addEventListener('mousemove',function(e){if(!s.drawing)return;var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();s.drawn=true;});
+  canvas.addEventListener('mouseup',function(){s.drawing=false;});
+  canvas.addEventListener('mouseleave',function(){s.drawing=false;});
+  canvas.addEventListener('touchstart',function(e){e.preventDefault();s.drawing=true;var p=pos(e);ctx.beginPath();ctx.moveTo(p.x,p.y);},{passive:false});
+  canvas.addEventListener('touchmove',function(e){e.preventDefault();if(!s.drawing)return;var p=pos(e);ctx.lineTo(p.x,p.y);ctx.stroke();s.drawn=true;},{passive:false});
+  canvas.addEventListener('touchend',function(){s.drawing=false;});
+}
+initPad('inst');initPad('ts');
+
+function setSigMode(id,mode,btn){
+  sigStates[id].mode=mode;
+  btn.closest('.sig-box').querySelectorAll('.smb').forEach(function(b){b.classList.remove('active');});
+  btn.classList.add('active');
+  var canvas=document.getElementById(id+'-canvas');
+  var typeIn=document.getElementById(id+'-type');
+  if(mode==='draw'){canvas.style.display='block';typeIn.style.display='none';}
+  else{canvas.style.display='none';typeIn.style.display='block';}
+}
+
+function clearSig(id){
+  var canvas=document.getElementById(id+'-canvas');
+  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  sigStates[id].drawn=false;
+  document.getElementById(id+'-type').value='';
+}
+
+function getSig(id){
+  var s=sigStates[id];
+  if(s.mode==='type'){
+    var val=(document.getElementById(id+'-type').value||'').trim();
+    if(!val)return null;
+    var c=document.createElement('canvas');c.width=600;c.height=160;
+    var ctx=c.getContext('2d');
+    ctx.font='italic 48px Georgia,serif';ctx.fillStyle='#111';ctx.textBaseline='middle';
+    ctx.fillText(val,10,80);return c.toDataURL();
+  }
+  if(!s.drawn)return null;
+  return document.getElementById(id+'-canvas').toDataURL();
+}
+
+function buildPDF(){
+  var J=window.jspdf.jsPDF;
+  var doc=new J({unit:'mm',format:'a4'});
+  var pw=210,ml=15,mr=15,mt=15,lh=6;
+  var y=mt;
+  var tc=[30,30,30],mc=[110,110,110],bc=[210,210,210];
+
+  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(tc[0],tc[1],tc[2]);
+  doc.text('Operator Proficiency Check',pw/2,y,{align:'center'});y+=5;
+  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(mc[0],mc[1],mc[2]);
+  doc.text('AeroTech  |  Rev 1.1',pw/2,y,{align:'center'});y+=8;
+  doc.setDrawColor(bc[0],bc[1],bc[2]);doc.setLineWidth(0.3);doc.line(ml,y,pw-mr,y);y+=6;
+
+  var trainee=v('trainee-name')||'___________________';
+  var arn=v('arn')||'___________';
+  var ttype=v('training-type')||'___________';
+  var acReg=v('aircraft-reg')||'___________';
+  var gTime=v('ground-time')||'—';
+  var fTime=v('flight-time')||'—';
+  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(tc[0],tc[1],tc[2]);
+  doc.text('Name:',ml,y);doc.setFont('helvetica','normal');doc.text(trainee,ml+14,y);
+  doc.setFont('helvetica','bold');doc.text('ARN:',115,y);doc.setFont('helvetica','normal');doc.text(arn,123,y);y+=lh;
+  doc.setFont('helvetica','bold');doc.text('Aircraft:',ml,y);doc.setFont('helvetica','normal');doc.text(aircraft,ml+18,y);
+  doc.setFont('helvetica','bold');doc.text('Registration:',115,y);doc.setFont('helvetica','normal');doc.text(acReg,138,y);y+=lh;
+  doc.setFont('helvetica','bold');doc.text('Ground time:',ml,y);doc.setFont('helvetica','normal');doc.text(gTime,ml+24,y);
+  doc.setFont('helvetica','bold');doc.text('Flight time:',115,y);doc.setFont('helvetica','normal');doc.text(fTime,136,y);y+=lh;
+  doc.setFont('helvetica','bold');doc.text('Initial or recurrent:',ml,y);doc.setFont('helvetica','normal');doc.text(ttype,ml+36,y);y+=8;
+
+  function secH(title){
+    doc.setFillColor(240,240,240);doc.rect(ml,y,pw-ml-mr,6,'F');
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
+    doc.text(title,ml+2,y+4.2);y+=8;
+  }
+  function rows(arr){
+    doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
+    arr.forEach(function(r){
+      var label=r[0],val=r[1],isG=r[2];
+      if(isG){doc.setFont('helvetica','bold');}else{doc.setFont('helvetica','normal');}
+      var lx=isG?ml:ml+5;
+      var lines=doc.splitTextToSize(label,pw-ml-mr-22);
+      lines.forEach(function(line,i){
+        if(y>267){doc.addPage();y=mt;}
+        doc.text(line,lx,y+3.5);
+        if(i===0&&val&&!isG){
+          doc.setFont('helvetica','bold');doc.text(val,pw-mr-2,y+3.5,{align:'right'});doc.setFont('helvetica','normal');
+        }
+        y+=lh;
+      });
+      doc.setDrawColor(bc[0],bc[1],bc[2]);doc.setLineWidth(0.1);doc.line(ml,y,pw-mr,y);
+    });
+    y+=3;
+  }
+
+  var ac=Array.from(document.querySelectorAll('[data-check]'));
+  secH('Knowledge requirements');
+  rows([
+    ['Fatigue management limitations - CAO 48.1',ac[0].value||'—'],
+    ['Company operations manual - Operations Manual',ac[1].value||'—'],
+    ['IFR / VFR knowledge requirements','',true],
+    ['Privileges and limitations',ac[2].value||'—'],
+    ['Proficiency check requirements',ac[3].value||'—'],
+    ['IFR and approach recency requirements',ac[4].value||'—'],
+    ['Interpreting operational and meteorological information',ac[5].value||'—'],
+    ['Application of takeoff minima',ac[6].value||'—'],
+    ['Alternate / holding requirements',ac[7].value||'—'],
+    ['IFR or VFR procedures for all airspace categories',ac[8].value||'—'],
+    ['Departure and approach instrument procedures',ac[9].value||'—'],
+    ['Operations below LSALT / MSA for day and night operations',ac[10].value||'—'],
+    ['GNSS and PBN standards',ac[11].value||'—'],
+    ['Requirements for circling approaches',ac[12].value||'—'],
+    ['Adverse weather conditions',ac[13].value||'—'],
+    ['IFR planning or VFR planning',ac[14].value||'—'],
+  ]);
+  secH('Flight component');
+  rows([
+    ['Pre-flight','',true],
+    ['Flight planning accurate and complete',ac[15].value||'—'],
+    ['Performance knowledge and application',ac[16].value||'—'],
+    ['Perform pre-flight actions and procedures',ac[17].value||'—'],
+    ['Ground operations, take-off, departure and climb','',true],
+    ['Complete all relevant checks and procedures',ac[18].value||'—'],
+    ['Plan, brief and conduct take-off and departure procedures',ac[19].value||'—'],
+    ['Conduct instrument departure',ac[20].value||'—'],
+    ['Conduct an engine failure below turnback height',ac[21].value||'—'],
+    ['Conduct an engine failure above turnback height',ac[22].value||'—'],
+    ['Enroute cruise','',true],
+    ['Navigate aircraft enroute using ground and satellite navigation systems',ac[23].value||'—'],
+    ['Perform navigation systems integrity checks',ac[24].value||'—'],
+    ['Identify and avoid hazardous weather',ac[25].value||'—'],
+    ['Use correct radio procedures',ac[26].value||'—'],
+    ['Manage relevant aircraft systems',ac[27].value||'—'],
+    ['Manage fuel system and monitor fuel plan and usage',ac[28].value||'—'],
+    ['Conduct glide approach to landing',ac[29].value||'—'],
+    ['Activities and manoeuvres','',true],
+    ['Perform full and limited panel instrument flying',ac[30].value||'—'],
+    ['Unusual attitude recovery',ac[31].value||'—'],
+    ['Engine failure drill',ac[32].value||'—'],
+    ['General aircraft handling',ac[33].value||'—'],
+    ['Descent and arrival','',true],
+    ['Perform a descent or published arrival procedure to the aerodrome',ac[34].value||'—'],
+    ['Track to the holding fix and conduct holding pattern or sector entry',ac[35].value||'—'],
+    ['2D approach','',true],
+    ['Prepare for the approach',ac[36].value||'—'],
+    ['Conduct approach',ac[37].value||'—'],
+    ['Conduct missed approach',ac[38].value||'—'],
+    ['3D approach','',true],
+    ['Prepare for the approach',ac[39].value||'—'],
+    ['Conduct approach',ac[40].value||'—'],
+    ['Conduct missed approach',ac[41].value||'—'],
+    ['Circuit, approach and landing','',true],
+    ['Conduct visual circling with at least 90-degree heading change',ac[42].value||'—'],
+    ['Approach stable IAW company procedures',ac[43].value||'—'],
+    ['Perform after landing actions and procedures',ac[44].value||'—'],
+    ['Shutdown and post flight','',true],
+    ['Park, shutdown and complete post-flight administration',ac[45].value||'—'],
+  ]);
+  secH('Emergency procedures');
+  rows([
+    ['Engines, propeller, and fuel',ac[46].value||'—'],
+    ['Electrical',ac[47].value||'—'],
+    ['Fire or smoke',ac[48].value||'—'],
+    ['Flight controls and stall warning',ac[49].value||'—'],
+    ['Navigation and flight instruments',ac[50].value||'—'],
+    ['Passenger evacuation and emergency landings',ac[51].value||'—'],
+    ['Cabin or cargo door warning',ac[52].value||'—'],
+    ['Abnormal and emergency passenger PAs',ac[53].value||'—'],
+  ]);
+  secH('Non-technical skills');
+  rows([
+    ['Communication',ac[54].value||'—'],
+    ['Situational awareness',ac[55].value||'—'],
+    ['Threat and error management',ac[56].value||'—'],
+    ['Decision making',ac[57].value||'—'],
+    ['Workload management',ac[58].value||'—'],
+    ['Task management',ac[59].value||'—'],
+    ['Monitoring and cross-checking',ac[60].value||'—'],
+    ['Fatigue management',ac[61].value||'—'],
+  ]);
+
+  var comments=v('comments');
+  if(comments){
+    secH('Comments');
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
+    doc.splitTextToSize(comments,pw-ml-mr).forEach(function(line){
+      if(y>267){doc.addPage();y=mt;}
+      doc.text(line,ml,y+3.5);y+=lh;
+    });y+=3;
+  }
+
+  if(y>240){doc.addPage();y=mt;}
+  secH('Completion certification');
+  doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(mc[0],mc[1],mc[2]);
+  doc.splitTextToSize('This is to certify that the above-named person has completed the emergency procedures training and assessment for a Part 135/138 general emergency procedures check.',pw-ml-mr)
+    .forEach(function(line){doc.text(line,ml,y+3.5);y+=lh;});
+  y+=5;
+
+  var sigW=(pw-ml-mr-10)/2;
+  var sigBoxH = 18;
+  [['inst','Check Pilot'],['ts','Candidate']].forEach(function(pair,i){
+    var sid=pair[0],label=pair[1];
+    var sx=ml+i*(sigW+10);
+    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
+    doc.text(label,sx,y);
+    doc.setDrawColor(bc[0],bc[1],bc[2]);doc.setLineWidth(0.2);doc.rect(sx,y+2,sigW,sigBoxH);
+    var sigData=getSig(sid);
+    if(sigData){try{doc.addImage(sigData,'PNG',sx+1,y+2,sigW-2,sigBoxH);}catch(e){}}
+    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(mc[0],mc[1],mc[2]);
+    doc.text('Name: '+(v(sid+'-name')||'___________________'),sx,y+23);
+    if(sid==='inst'){
+      doc.text('ARN: '+(v('inst-arn')||'___________'),sx,y+28);
+      doc.text('Date: '+(v(sid+'-date')||'___________'),sx,y+33);
+    } else {
+      doc.text('Date: '+(v(sid+'-date')||'___________'),sx,y+28);
+    }
+  });
+
+  return doc;
+}
+
+function exportPDF(){
+  var name=v('trainee-name')||'Unknown';
+  buildPDF().save('OPC_'+name.replace(/\s+/g,'_')+'.pdf');
+}
+
+function openModal(){document.getElementById('modal').classList.add('open');}
+function closeModal(){document.getElementById('modal').classList.remove('open');}
+
+function doSend(){
+  closeModal();
+  var name=v('trainee-name')||'Unknown';
+  buildPDF().save('OPC_'+name.replace(/\s+/g,'_')+'.pdf');
+  var s=loadGlobalSettings();
+  var to=s.emailTo||'';
+  var cc=s.emailCc||'';
+  var bcc=s.emailBcc||'';
+  var subject=(s.emailSubjectPrefix||'Operator Proficiency Check')+' — '+(v('trainee-name')||'AeroTech');
+  var body='Please find the Operator Proficiency Check for '+(v('trainee-name')||'the candidate')+' attached.';
+  var mailto='mailto:'+encodeURIComponent(to);
+  var params=[];
+  if(cc)params.push('cc='+encodeURIComponent(cc));
+  if(bcc)params.push('bcc='+encodeURIComponent(bcc));
+  params.push('subject='+encodeURIComponent(subject));
+  params.push('body='+encodeURIComponent(body));
+  if(params.length)mailto+='?'+params.join('&');
+  setTimeout(function(){window.location.href=mailto;},600);
+}
+</script>
+<script>
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('../sw.js').catch(function(e){console.log('SW registration failed', e);});
+  });
+}
+</script>
+</body>
+</html>
