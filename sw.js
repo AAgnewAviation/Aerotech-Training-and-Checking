@@ -1,52 +1,251 @@
-const CACHE_NAME = 'aerotech-forms-v1';
-const FILES_TO_CACHE = [
-  './index.html',
-  './manifest.json',
-  './icons/icon-192.png',
-  './icons/icon-512.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
-];
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, viewport-fit=cover">
+<title>AeroTech Forms</title>
 
-self.addEventListener('install', function(event) {
-  event.waitUntil(
-    caches.open(CACHE_NAME).then(function(cache) {
-      return cache.addAll(FILES_TO_CACHE);
-    })
-  );
-  self.skipWaiting();
-});
+<!-- PWA manifest -->
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#1a6ef5">
 
-self.addEventListener('activate', function(event) {
-  event.waitUntil(
-    caches.keys().then(function(keys) {
-      return Promise.all(
-        keys.filter(function(key) { return key !== CACHE_NAME; })
-            .map(function(key) { return caches.delete(key); })
-      );
-    })
-  );
-  self.clients.claim();
-});
+<!-- iOS install support -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="AeroTech Forms">
+<link rel="apple-touch-icon" href="icons/icon-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    caches.match(event.request).then(function(cached) {
-      if (cached) return cached;
-      return fetch(event.request).then(function(response) {
-        // Cache successful same-origin responses for next time
-        if (response.ok && event.request.url.indexOf('http') === 0) {
-          const responseClone = response.clone();
-          caches.open(CACHE_NAME).then(function(cache) {
-            cache.put(event.request, responseClone);
-          });
-        }
-        return response;
-      }).catch(function() {
-        // Offline and not cached — fall back to index.html for navigation requests
-        if (event.request.mode === 'navigate') {
-          return caches.match('./index.html');
-        }
-      });
-    })
-  );
-});
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#ffffff;--bg2:#f5f5f7;--bg3:#ebebed;
+  --text:#1a1a1a;--text2:#6e6e73;--text3:#aeaeb2;
+  --border:#e0e0e2;--border2:#c8c8ca;
+  --accent:#1a6ef5;--accent-bg:#eaf0fe;
+  --green:#2d8a4e;--green-bg:#eaf4ee;
+  --amber:#b45309;--amber-bg:#fef3e2;
+  --radius:14px;--radius-sm:7px;
+  --font:-apple-system,BlinkMacSystemFont,'Helvetica Neue',Arial,sans-serif;
+}
+@media(prefers-color-scheme:dark){
+  :root{
+    --bg:#1c1c1e;--bg2:#2c2c2e;--bg3:#3a3a3c;
+    --text:#f2f2f7;--text2:#aeaeb2;--text3:#636366;
+    --border:#3a3a3c;--border2:#48484a;
+    --accent:#4d90fe;--accent-bg:#1a2a4a;
+    --green:#34c759;--green-bg:#0f2e1a;
+    --amber:#f59e0b;--amber-bg:#2a1e08;
+  }
+}
+body{font-family:var(--font);background:var(--bg2);color:var(--text);font-size:15px;min-height:100vh}
+
+/* NAV */
+.nav{background:var(--bg);border-bottom:1px solid var(--border);padding:0 16px;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100}
+.nav-brand{display:flex;align-items:center;gap:10px}
+.nav-logo{width:30px;height:30px;background:var(--accent);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-logo svg{width:18px;height:18px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.nav-title{font-size:15px;font-weight:600}
+.nav-sub{font-size:11px;color:var(--text2)}
+.icon-btn{width:36px;height:36px;border-radius:var(--radius-sm);border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--text2)}
+.icon-btn svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.icon-btn.active{background:var(--accent-bg);color:var(--accent);border-color:var(--accent)}
+
+/* TOP TABS (Home / Settings) */
+.toptabs{display:flex;background:var(--bg);border-bottom:1px solid var(--border)}
+.toptab{flex:1;padding:13px 8px;text-align:center;font-size:13px;font-weight:500;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;display:flex;align-items:center;justify-content:center;gap:6px}
+.toptab.active{color:var(--accent);border-bottom-color:var(--accent)}
+.toptab svg{width:16px;height:16px;stroke:currentColor;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+
+.page{display:none;padding:16px;padding-bottom:40px}
+.page.active{display:block}
+
+/* FORM GRID */
+.section-label{font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.06em;margin:4px 0 10px}
+.form-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+@media(min-width:600px){.form-grid{grid-template-columns:repeat(3,1fr)}}
+@media(min-width:900px){.form-grid{grid-template-columns:repeat(4,1fr)}}
+.form-card{background:var(--bg);border:1px solid var(--border);border-radius:var(--radius);padding:16px 14px;display:flex;flex-direction:column;align-items:center;gap:10px;cursor:pointer;text-align:center;transition:transform .1s, box-shadow .1s}
+.form-card:active{transform:scale(0.97)}
+.form-icon{width:52px;height:52px;border-radius:14px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.form-icon svg{width:26px;height:26px;stroke:#fff;fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.form-card-title{font-size:13px;font-weight:600;color:var(--text);line-height:1.3}
+.form-card-sub{font-size:11px;color:var(--text3)}
+.add-card{border:1.5px dashed var(--border2);background:transparent;color:var(--text3)}
+.add-card .form-icon{background:var(--bg2);color:var(--text3)}
+.add-card .form-icon svg{stroke:var(--text3)}
+
+/* SETTINGS */
+.setting-card{background:var(--bg);border-radius:var(--radius);border:1px solid var(--border);overflow:hidden;margin-bottom:14px}
+.card-header{padding:13px 14px;border-bottom:1px solid var(--border)}
+.card-header h2{font-size:12px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
+.card-header p{font-size:11px;color:var(--text3);margin-top:3px;text-transform:none;letter-spacing:normal;font-weight:400}
+.set-row{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;border-top:1px solid var(--border);gap:12px}
+.set-row:first-child{border-top:none}
+.set-label{font-size:14px;color:var(--text);flex-shrink:0}
+.set-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.set-row input{font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius-sm);background:var(--bg2);color:var(--text);width:200px;font-family:var(--font);outline:none;-webkit-appearance:none}
+@media(max-width:500px){.set-row{flex-direction:column;align-items:flex-start}.set-row input{width:100%}}
+.saved-msg{font-size:12px;color:var(--green);text-align:center;padding:8px;display:none}
+.install-steps{font-size:13px;color:var(--text2);line-height:2;padding:14px}
+.install-steps b{color:var(--text)}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-brand">
+    <div class="nav-logo">
+      <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+    </div>
+    <div>
+      <div class="nav-title" id="company-name">AeroTech Forms</div>
+      <div class="nav-sub">Training &amp; Checking</div>
+    </div>
+  </div>
+</nav>
+
+<div class="toptabs">
+  <div class="toptab active" onclick="showPage('home')" id="toptab-home">
+    <svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+    Forms
+  </div>
+  <div class="toptab" onclick="showPage('settings')" id="toptab-settings">
+    <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+    Settings
+  </div>
+</div>
+
+<!-- HOME / FORM LAUNCHER -->
+<div class="page active" id="page-home">
+  <div class="section-label">Available forms</div>
+  <div class="form-grid">
+    <div class="form-card" onclick="window.location.href='forms/ep-training.html'">
+      <div class="form-icon" style="background:#1a6ef5">
+        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+      </div>
+      <div class="form-card-title">EP Training Report</div>
+      <div class="form-card-sub">Emergency Procedures</div>
+    </div>
+
+    <div class="form-card add-card" onclick="alert('Send the next form to Claude to have it added here.')">
+      <div class="form-icon">
+        <svg viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      </div>
+      <div class="form-card-title">More coming soon</div>
+      <div class="form-card-sub">Add via Claude</div>
+    </div>
+  </div>
+</div>
+
+<!-- SETTINGS -->
+<div class="page" id="page-settings">
+  <div class="setting-card">
+    <div class="card-header">
+      <h2>Company details</h2>
+      <p>Used across all forms for branding and prefill</p>
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">Company name</div></div>
+      <input type="text" id="g-company-name" placeholder="AeroTech" oninput="saveGlobalSettings()">
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <div class="card-header">
+      <h2>Default personnel</h2>
+      <p>Prefills name fields on relevant forms — edit on a form if it differs for that submission</p>
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">Instructor name</div></div>
+      <input type="text" id="g-instructor-name" placeholder="e.g. Alex Agnew" oninput="saveGlobalSettings()">
+    </div>
+  </div>
+
+  <div class="setting-card">
+    <div class="card-header">
+      <h2>Email recipients</h2>
+      <p>Used by every form's "Send via Mail" button</p>
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">To</div><div class="set-sub">Primary recipient</div></div>
+      <input type="email" id="g-email-to" placeholder="ops@aerotech.com.au" oninput="saveGlobalSettings()">
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">CC</div><div class="set-sub">Copy (optional)</div></div>
+      <input type="email" id="g-email-cc" placeholder="me@aerotech.com.au" oninput="saveGlobalSettings()">
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">BCC</div><div class="set-sub">Blind copy (optional)</div></div>
+      <input type="email" id="g-email-bcc" placeholder="archive@aerotech.com.au" oninput="saveGlobalSettings()">
+    </div>
+    <div class="set-row">
+      <div><div class="set-label">Subject prefix</div><div class="set-sub">Form name is appended automatically</div></div>
+      <input type="text" id="g-email-subject" placeholder="e.g. AeroTech Submission" oninput="saveGlobalSettings()">
+    </div>
+    <div class="saved-msg" id="saved-msg">✓ Settings saved</div>
+  </div>
+
+  <div class="setting-card">
+    <div class="card-header"><h2>Install on iPad</h2></div>
+    <div class="install-steps">
+      <b>1.</b> Open this page in <b>Safari</b> on your iPad<br>
+      <b>2.</b> Tap the <b>Share button</b> (box with arrow pointing up)<br>
+      <b>3.</b> Scroll down and tap <b>"Add to Home Screen"</b><br>
+      <b>4.</b> Tap <b>Add</b> — the app icon appears on your home screen<br><br>
+      <span style="color:var(--text3);font-size:12px">Works fully offline. Settings sync across every form in this app.</span>
+    </div>
+  </div>
+</div>
+
+<script>
+function v(id){return (document.getElementById(id)||{}).value||'';}
+
+function showPage(name){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.toptab').forEach(function(t){t.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  document.getElementById('toptab-'+name).classList.add('active');
+}
+
+function saveGlobalSettings(){
+  var s={
+    companyName: v('g-company-name'),
+    instructorName: v('g-instructor-name'),
+    emailTo: v('g-email-to'),
+    emailCc: v('g-email-cc'),
+    emailBcc: v('g-email-bcc'),
+    emailSubjectPrefix: v('g-email-subject')
+  };
+  try{ localStorage.setItem('aerotech_global_settings', JSON.stringify(s)); }catch(e){}
+  if(s.companyName) document.getElementById('company-name').textContent = s.companyName;
+  var n=document.getElementById('saved-msg');
+  n.style.display='block';
+  setTimeout(function(){n.style.display='none';},1800);
+}
+
+function loadGlobalSettings(){
+  try{
+    var s=JSON.parse(localStorage.getItem('aerotech_global_settings')||'{}');
+    if(s.companyName){document.getElementById('g-company-name').value=s.companyName; document.getElementById('company-name').textContent=s.companyName;}
+    if(s.instructorName)document.getElementById('g-instructor-name').value=s.instructorName;
+    if(s.emailTo)document.getElementById('g-email-to').value=s.emailTo;
+    if(s.emailCc)document.getElementById('g-email-cc').value=s.emailCc;
+    if(s.emailBcc)document.getElementById('g-email-bcc').value=s.emailBcc;
+    if(s.emailSubjectPrefix)document.getElementById('g-email-subject').value=s.emailSubjectPrefix;
+  }catch(e){}
+}
+loadGlobalSettings();
+
+// Support deep-link from a form's settings icon: index.html?tab=settings
+var urlParams = new URLSearchParams(window.location.search);
+if(urlParams.get('tab') === 'settings'){ showPage('settings'); }
+
+if('serviceWorker' in navigator){
+  window.addEventListener('load', function(){
+    navigator.serviceWorker.register('sw.js').catch(function(e){console.log('SW registration failed', e);});
+  });
+}
+</script>
+</body>
+</html>
