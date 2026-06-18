@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aerotech-forms-v4';
+const CACHE_NAME = 'aerotech-forms-v5';
 const FILES_TO_CACHE = [
   './index.html',
   './manifest.json',
