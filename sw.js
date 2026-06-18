@@ -1,4 +1,4 @@
-const CACHE_NAME = 'aerotech-forms-v5';
+const CACHE_NAME = 'aerotech-forms-v6';
 const FILES_TO_CACHE = [
   './index.html',
   './manifest.json',
@@ -6,6 +6,7 @@ const FILES_TO_CACHE = [
   './icons/icon-512.png',
   './forms/ep-training.html',
   './forms/operator-proficiency-check.html',
+  './forms/pilot-line-check.html',
   'https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'
 ];
 
