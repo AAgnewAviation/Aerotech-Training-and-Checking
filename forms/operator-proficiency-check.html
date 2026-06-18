@@ -486,184 +486,203 @@ function getSig(id){
   return document.getElementById(id+'-canvas').toDataURL();
 }
 
-function buildPDF(){
+/* ===== embedded Aerotech logo (offline) ===== */
+var AERO_LOGO="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAV4AAAA8CAIAAAChAkWoAAA/eElEQVR4nO19d3wVxf72zNbTa3qnhd6bdEQFKSIqIHrFfu3YvYrt2hWsiIpgQ8VKE0VApNdQQgmBhCSkl5OT08v23Xn/WDjmAtkTQSy/N8+HP8g5c2Znd2af+faBCCHwfxp1Ln9ljbe6zlta4UYIlZQ31rsCOI4BAHAcwyDMynAkOEwAAJYT+nbPnjl1yF895Da04a8H8VcP4EKhqta7dffxlWsPHimuDYYZAsdxAguHOafdZDBQsqyozXAMKyiqYVgBxzFvrfeZJ6f+tcNuQxv+Jvg/SA3BELvgi80LvtgSinAGPWXUUwkOM4QAIWA26gAAMV4AAMiKYjHrLWY9hJAXpMnj+vxl425DG/5O+L9GDRt3FN39xJcudzA12WY00DF1Ka7aJIqSzaLv1D75gg+xDW34J+D/FDUs+HzLYy99b7casjKcsqz8LjNKlBV6dsmwmvUXbnhtaMMfhapa7+pfDxsNtEYbXhAnXto7I9V+bpf4v0MNs576avHSXRmpdgzDmqsMrUQ4wl02stuFGFgb2vCHY97HG95+c5Uh2dpSA0lWBF6s3Pv6OV/i/wg13DN7yYq1+SpBnpvPBcNgn+6Zf/S42tCGC4ITVe7UTqkaQm4gxAzsnZOd4TznS/xfoIb7nvpqxdoDdqvxfDoxGeiczIQ/akht0MBn3+3cubfUYtG11CDKCOkp9mcenAQh/DMH9k9BOMLlH6ky6CntNqOGdDmfq/zjqeGBZ79Z+vN+x/nxAsMKqUm2nPOg2Da0EqIov/zual8gatS3qCc3uAPTJw1s44WWUFLeyHGi6m47KyAEOI716XZeUvA/mxoeePbbb1ftddjOixcAAMEwO3Vif4LA/5BRtUEDDe6APxBNclpaevEhBP4gedP0oX/uuP5J2HeoQlG0tGZZRjqK7NY57Xyugp3Pj/9a3P/M19+u2nP+vAAAUBRlUN/2599PG+KiqNQVZQSsZYEAKcBooNtnJf6Jg/qHYd/hSorS2sY4XkxLsSU6zedzlX8qNTz03Lffrdr3h/ACAADDsN7dMv6Qrtqgjc27ig16SmPL4wQxwWHKalPuWgDPS7vzT+h1WoaGKMOPGpJL4Of1dv8jqeHh57/7esUeh/2P4QVRlGwWQ1Z621q84JBlZeP2Y2ZTi0oyACDK8Bf170BT/2xV98Kh0RN0uYM0RWq0ESX5on4dzvNC/7wJ+M/LS5cs3+2wmf6oDiNRYfTQztr23hgkSfYFmcamUHWtV6+nGE7w+sJVdb52GQlOu5Ek8SgrZKTas9OddquRIP5U5nW5g8UnXD5/pM4VSEm0Trikp3ZITAzBEBsMM0dL6imCCISY8pomQZAVRcEgRABYTLr2WYkURQAIunVKs1sNrez2TNQ3Bmoa/DaLVlwZy4kjBnU6h85lRQkEmboGf0WNx6CjRUl2NQVrG/w5mQlOu1Gvo1hOSEu2pSZbHVYjdcGoxx9kPL7wsZJ6s1FX3xioqPHiOAQAAAQ65CTZrQaWE7t3TrOY9EkJ5yLwFx6v5wUJw+IE+PbtnnXaJ5EoV17V1NAUAggVlzXQNNU+K0FWlO656empNhw7fa3+w6jh8ZeXLf5up8Nm1H40EAAFIYQAjsO4UQ5Rlh81JFe7TU29/9DR6l37y/YfriqtcOE4JoqyxxeBEBr0lM1i8AejLCcAABIcZpLAWV7s2jG1b4/MEYNzB/TOSUu2tf4eWU645aHPREnW0S3uDMEQe/GwLo/cOVb9s6i0YdGSras3HA6EWI4XTUbaVeMtypvTpWNKSz1EotyBI9Xb95YeOFJVWFzHcAJF4G5PCMMxu9UIAUAAAQAwiImS7AtGCRxLdJg5XnQ6TEP6dejVLWPURbndctN+lx+hqsbr9UccNmNLsScKQgCAyy/u0fo+fYHo9j0lu/PLC4pqjxTVkCSBEGryhhFCJqPOYtYHggzDCoqCnHajTkcKotQxJ6lPt8zRQ7sM6tMuJanFqKHWo7EpdKy0fte+sr2HKgqP18kyghC43EGjgbaa9bKiAAAxCP2hqCQpyYkWUZRJEu+emzZ0QMf+vbK756altnqFbNt9XK8jNVa1JCtWsz71VDQUQmjHvrK1m478tP5wOMqGI3yU5ZOcZlGSA0EmwWnGIezYPvnGqUOuHNe3eaAE/AclZT/12oqPvt7msBnV3awlQAhkBcmS4rSbQhE2brdN3vCyj+4ZPaTzWb/NO1C+bPX+lesOhiMshFCvI0mSwCDEMAgAgACcORKEkKIglhM4XsIgpGhi+qQBN00f1qtrq8wZJ6qa+o97ISnRjLX41sHaBt+7L15/64zhkqws/HLr03NXYBjmsBlJAgMAMKyQlmzbvvIJ/Gza5rGS+q9W7lm6ep8/wGAYpCiCInCcwNR946x3pCanAQAUBQmiFGV4DIMYxPr0yLxp2rDJY3trqL4nqtxRRqBIXEeTry9Y992P+xOdLUp8iqJwvPjJm7d0yE7ieFFWFAyDndunnPVGDhZWf/jlll+3HouyvKIgiiKMegpiEIPwrHehjh8hJIgyx4uSJFvN+nEX93j0znHts8/R6llQVPvl0l2rfj0cCDIIIZ2OpEkCxzEMa3EMsWGwnBBlBAyDdqtx4mW9rhnfb8TgOFuUoqDhU16tbfBrCG6+QPTiIV2+/fBOAEBhcd2jL36/71AlhMBq0ZMkAZvNpvofWVFYVvAHGZvFsGT+v0cPPfki/GOo4Zm5Kz/8cqvTHpcXoCzLbk/4nReuc7kD7y3ebNKUfmVFYRjh4Pr/nmnOLat0P//Wj+s2FwKAHDYTjmPn8KwghLKs+AIRCOF1UwY/ef/E5ASL9k+Wrt5/0wOf5GQ6W7oaAsDtCVXkzbGYdGOufeNgQVVSgoUk8ZhDy+0J//v6Ea89dXqCeWl543ufbfpm1R4AgNFA63XUOYaOnlpVUYaPMkKndklzn5428qKzLOtIlDd3vhcAoKdJSZKTE612m0EUZY2eCRxr9IQDIQbHMS7MJqc56vLfOI0aCo/XzX1/7aadxaIkm4w0TZHnNjWiKIWjvCBIN00fNvu+8UnxpqY58g6cWPD5lh/XH6IowmLSnbPnG0IoSXIwzGIYHNSn/TMPThrQO6elxo2eUN/LnjeZ6DPl/xhqG/wrPr73spHdnn39hwVfbKEpwmLWxw0SxjAsEuUa3IFFc2+6efow8E8xQz7/1o+t5AVRkgJB9oNXb7hp2tDd+eUtb7wnwbJiTlaCWsqlOeZ/unHIFS9v2H4s0WFKdFow7Bw5FCGEYTDRaXHYjF+tyBt6xSt7DlZo/2RXfplBT2lcTeClYQM6QgD+/djnR47VpqXYcByL8QKEgGH5oQM7/u8wwPzPNo28Zs6SFbuddlOCw6yjSXQe24L6S6OBTkmy1LkCU25976V5q8/sr6zSbbfou3RIyc5wdshJMhlpbV4AAEiy4rQbO2Qn5mQ4TTbjE/eOP40X3v1kw2Uz3tywo8hooJ12E0US5zw1BIE77cZEp/mrFbu7jHr6YGF1a37IsMITry6fOPPdtZuPpCZbnXbT+UTEIIRwHHPajTaL4dDR6gkz572+YF1LjYvLGhhOIFrmBQBAgsPU0Bi458klH3y+2WY1WC161IqZVhTFZKAz0xy3PbL46PF68I+ghlfm//zeZ5ucdiOGxeMFUQ6G2KcfvOK6KYN9gej+w5Ua6rqKKMNfPLRLc4WZF6SbHvjk8ZeX2SwGh82IzjUpozkQQhDC5ESLJCvj//X2Z9/taKmlJMk79paZWg50AwDgOGa3GWbe/8lPvx5OTbKeNjqEgF5Hdu+cHvvEF4je+fgXs19ZZjLQqmr9B4qKioLMJl1igvmdj9ZfcfP803rOyz9x7l1DgBDo32wLDYTYe55c8txbP5qNOpvFcM583RyKonK32WzSjb3uza9W5mm3P1hYPfLqOQu/2JqUYE5wmBH6Yx5mjGrtVsPzb/149xNfnLVZ/uGquK+5yaj77xurflp/ODnRQjTbM+JCQUhHkwkO01W3v68o6O9uhnztvTVvL1zvcJgwTMugqEplgRDzwmNT7r5xNADgwJGqQIixmHWavwIIoEHNFh/Hi+Oufyu/oKp9dqIsK61/rK2BoiCjgSZJ/P5nvk5Jso6/uOeZbVxNoZo6n7YNnyTxvPxyUZKddpN0Ro4pL0hJCZbUU9a1xqbQ8CmvhiJcTkaCrLTqjmK6aCuBEMIgTHJaduwp+e+bq154dErsq/0FlQR5jmsMKcBhM8T0r1CYHXnVa25PKCXRilqzD/4eKAoyGWgcwpsf/DQ7zTl88NldJNV13uFTXjWb9Omptt+V9Y8QAiC+xVaVMbMzE75cnscJ8mdv3XJag827j8d1pUmSTNOEDsJzWL2KghIdpooaz459pX9rqeH1BeveWPiLw27CW8ELXn/0lSeuVnkBALDvYAWOY9pzpyiAxLHuXX7bYKfc8l5+QXVOZoJ2Wrc6yaEw2+QN17n8EIJgmK2q9YYjHMeJGksAIUSRRILDPO2OD73+yJkNyird4QiHaUQLnhJBVY3gzG8jEW5I/w7qApIVZfwN70QY3mk3yor2HQEAAC9IwRDr8UUqajylFY0N7qA/yISjHGjFukYApCXbXnzrp5hYzvHijn1lppZzJbTB8UKiw9wuM0HtfOodCzy+sL1l78apG4EIAZ4Xm7xhlztIEFg4ytXU+73+SIThsZZvQ1GQTkdlpTtGXjPH7Qmf2aCswt1p2JMJDrPTboy3PACEgBekUJitcwU4XoQQcrxQ2+D3BxlRlLX1XEVWMlLtS5btPk3BCYXZI0U12raz2EOI26bFqyNEEPjmncV/X6nhjYW/zHl/rdNuOqsDEgKgIKAgRRBkhuHDUe79V264dcbwWINNu4pMxjgPURAkp92cnnKy1sXzb/24aWdRboeUuOUeQmEWITR0QMdLR3Tr2TXD649YTDocxzZsL9q8s/h4uctkpGmKOCttI4SMBjoQYiff/O7OVU+e9u3eg+UkEYfRtMHx4kX9T4a7PPHK8pIKV05GHKbDMMhyYijMpqfYr5nYv3tuWvfcNKORrq33Hz5Ws2X38Z17y+w2g0FPK5r8AiBMSrTMnPXxkU3PQwjrXIG6Bn9qklWWFQyDrVmvqnMHQAAA8AeZ8WN6kiQOAHh53uode0vbZyXImjshhsFQmJMVpX/P7CvH9uncMcXrj1rMOgzDdu8/sX7b0cPHamxmvV5PtTQ1Opq0Ww0zZ3207puHmw9XkuThU161WvRmky7uw4xE+SjD53ZIGTeqx8iLOkmyoqNIBJCioE07ir5amefxRZwOkwbHYRjmsBtvefjTg7/8N/bcjp9wMayQYDe1ZnVgGIxGeYYTSAIHAKi+cLNJF1eUQAg4bMb9hyv/ptTw9ke/vjp/TYL9N78AhECSFdUqLggSAICiCALH2mUl9uqaMf2KgSOaCYG+QPRoSUNcfg1F2OmTBqiBd6UVja/O/7lddmJcXghHuEF92z31wKT+PbNP+2r4oE6zZ034Yd3BB575WqRJk5E+60zIspKeYttzsGLj9qJLRnRt/tWW3cfNpnOvNAUhhBhUvaQFRbVvL/o1t31SnKUModcfsVmM33xwx5D+HZvzabdOaWNHdX/krnEHjlRN/feCQJCx2wwavSGEEh3mo8drDx6t6dcja+P2YxF3MGygFYQsJh1NkRqSCwQAQBgKs6IkYxgGAAh5QmpiS1Wt95m5K3M7pGjwgqoENTaFLhne9an7J/Y6I+lw9JDOj941btX6gw8//30kyrc0NYqC0pJt2/aWrN1YMOGSXrHPn5qz0h9kOrVP1n6YBI41ekIpSdZP37pl6ICOet3ppq7RQzrfd8uYZ+b+sHLdgSSnpaUHghBy2k2l5e7yak+HU47V4jIXx4kaV1eBYZDjJX8g2i037cpxfbp2SiVwrKyy6dtVe48er0tNtsW1Nel1VKMn+Hekhnc/3fjSO6sdNoMgSjKnRBmBIDBJki1mvSQrlwzv2qNzerfOaT1y0zNS7equAgAIRbi6Bn9ljae63rdxRxFF4ES87TfK8MNOBd7d8vBnJqNO22xD4FidKzDr1jHPN1OnTwNNEddOHtivR9bIq+fwJE62YLtWFMVpN81dsK45NQRD7LGSBppu1aRACAVRkmWFYYVIlLNZDDRNqr56lRoeef47m0XfQqTCSeAY5vGFB/TO+XzebU772cMNMAgH9MrZ/eOTY6bNDUe45hU3z3JfSLFaDB99tW3BqzfMuHLQ6KFdKIrQ0cRn3+54a9GvZ3qCYkAA+HyRD+fOHDqgI8sKAEJBlNplJAAAZj7wsdNu0p4aCKHbE3rojrFP3T+xpTYkiU+dOKBX14yRV88hCJwizz41kqyYjbr3F2+OUUNVrffdTza2j7dtkARefKJhxuRBC+bcaGzZIpCUYFk498ZQhNuyu9hq1quGTISAJMu8IBEEThJ4lOHDYZZh+LWbjtx3yxj1hzv2ldI0qb3p4zgWDLGKorz74nVXT+jf3DBx+/Uj5ry39r3FG5MSrAjF2f8Q+ptFQ4qSfM/sJR9/sSU1zRGO8lnpztQky9ABHbPSHT26ZGSmOZrb5xSEGptCh47WFJc27NxfdqKqKRCMspzI86JeTzlscRRCgICOJtXt5WBh9cEjVTmZCdriltsbfvD2y559+Iq4N9KpffKqxbPGzngzJdl2VjEaIWC3Gg8dra5t8Meq99W5/G5PKG5lHgzDWFYIhJkEu6lzp9TuuemJTnNVva+sorGgqDbRbjYa6Np637Y9JR2zkxQNqRVCXzDauWPqD5/eF9f9lppsXfnpfQPGv2g0aJnB1Ptav6VQpXLLqeg6lpMUzeUoiBJJ4pPH9jnNY19U2rAjr7Rrbqr21PgC0btuHK3BCzHktk9Z+fF9E26cl5xgbknHsVuNew6WN3nDarTLW4vWEwSGQajxMHEMq28MTLq09xfv3h53DACA5x6Z3GVEnijKkiQnJVhoijAQtMVEW0w6vZ5KT7FnpNoZVogFa4qSvHV3iXb6CYSA40SG5Xeumt2lY+pp3+po8r+PTN5fUHmwsFq7HwAQSeB/L2rYsO2YKEgrFs/q3CElO8N5WshXOMIVl7n2HCgvPtGwc19ZkzfsD0QBhLKs0BSh/tPRpLpLxtULJFm2W42qlWvx9zt1tFYogQoCxyaP66Oal9RV9T9LC530t6kO887tU3p0SW9wB6kWTPQYBsMR7lhJXYwa9h2q1DZAAgBIAm/0hBQFzX/x+stGdktw/hY0qSjI64+oA1u+5gCGYdo3pCAUCrNL5t/eSrd8l46p100ZtPznA8mJWqFBFEUghMqrm3LbnwzTFkX5h18OWDQVpSgjjBice2Ykz6ffbjcaae2pUW0E0yYN4HgxHOFgC2aNU1ODde6Ykts+2ReIEPjZb5wgMFlWtu8pvXpCP4YVVqw9kJxo0eAFAADDCQoA37x/h9ZAm6FDduLarx7OznA6bMZwlKMpwmYxmIw0QuCsa6C+IeD1R5yaKYUQwOo679YVj5/JCzE8cd+Ecde9pU0NHC8lJVj+XtQwfkzP8WNOuvQiDH/4aM2J6qa8/PLaBt/BwiqOlwJBRl15JgMNMWg/W1J2K014nCD17JxuMtKSpGzcUWQx6+P6ohx2080PfhIKs3a7CbWs+GI4FgoxBj1FU2RLCgU46a3ADx+rHTvqZMrApp3F8bYF6PFHEp3mTd8/embonuqfBwAgBL75YU+CI44xv9ETuvvGizPTHBptTsP0KwZ9tWKPdhsMg03eSHOtuNETdLlDdptB41fRKHfx0NNj1aMM/8O6g8kJlrheCZNRd/uji4Mh1mzSoZZfYgzDogxHkQSBYy3xAjgV7FBU2gAAKCiq9fujWRlOjTFACL3+yPsv/4uOF0cTA0HgsVSR5lTbkq22oLiW40VtF74/xAwfnDukv1bOZfusREGStMfmD0R7d8v866mB5YRAiK2p9/kDTCDEFBbXHjpaU98YqK7z6WiSYQXVlkNTBEngqcmnR/icM0Jh9uJhXQAA9Y2BeldAeydUIUmyBABFkwzDa7ckCJzjJV6QtMM3aZosKW9U/y+I8p6D5drJtgiBJk9o5w9PaIf0Rhne7Q23JK2oUIXPmddcpNHmTGSk2g2aCoUK1V0X+/NEVVMkymnveBiG9TvDrKt6TxMc8TMUJUkOixKOYwwraLdUbTSCFMdfQlNETb0PAJB/pEqnixOILcuK2aSbMKaXRpvzRH5BlTYvYBA2+cIrZ9+r3U84ysUVEhEAHdsl/XnUEI5yPC9xvFhe1QQAyDtQ7moK+gNMQVENx4uBICOIsiBKOppUXQ9OuxEAeJoD8o/iBQihIEhq8m+dyy9JcuvjfFrpMlbFQu0uIYSNTSH1/5U1nkAwarNqba0eX/iq8f3axauAVF3nJXANFz4AAAiClJ5q/70VUygKb00hfxzHMPy3q+85UEG2YPNTIcmKzWromHP6fZWUu3Q02Uonfeud+a1pSdOkSg0+X+SsyV3NEQgxo4d2/qMKiJwJRUEbth/TPiSFE6S0JFufM3KxT8PhY7UGHa1hmoYQkCSeneH8A6hBdUSzrBBheI83bDLqogxfVul2uYN6PVVR46moaoowvMsdrHMFFEWRJMXji6QkWUVRUhBSjaiWP/dsGFlWEhwm1eB3vMxltej/kiwzmiI8vjDHizqaLDxex/Kio+WdAULIckJrTuv1B6IQQs1Ae8ALcodsh7b+fybqXQGSiLNmEEJOm4nnf5Nat+yOoyiJotQuK+FMF0ltgz9uqPsFgijK6jzgGFSd5RpQFNSlQ4vq/fmjtsFfU+/TruwUCEVvnjYsbgmcQ4VV2jusJClGPdW5fQrhagq63EEIYFKiRWVojhObvGF1DzcZaTV30OUO1jcGIQT1jQE9TRn0ZGWtNxBigkHW64+KkuQNRGVZkWXFF4hKkmK16AEAjU0hi0mno0mWFw16CscgjhN6HWYx6RAAZ3p9/zRwvJCZ5khKtIBWJxRgGAwEGZYT4+4hrYckyZEIFwpzOposKq0nNMM3ZUXR66hBfeLXsGxVcBFAJEn83qi5Q8dqRTHOeyLJCo7DDjlJ6p8eX6S4tEE7vDcYYi8d0fVsw4atMR1hGPQHGe4PnRqGFfYcKJdkxdSKTQtCeGbE+h+IqlpPKMJqPEMIIcMKky7rrd2PoqBte0q0KYblxJzMhKQEMwEQOFJcV17VtGNvaVmlOxThkIIAAAwnJCdY6hsDEieSespspHU0KSvIbKR9gWg4wlktBoLAdBSJ41iU5XU0iWGQJHCbxQDhydWZlX7SxKX7Xxb4y/PAg2HuX1d3Ue3hHdslhSKc2aSVbYEQEkVl2hUDjQY6Gs/QoN47OhnVpxVWoJKp0UgDALbsOm7QjCmORvluuamtKQ2UnmqXZQUhiOMtvvoEgVfXeUVJ1jZJnIYly3YZ48WYMqzQp3tWTPqta/AHw6yGcQQCwAvSsIFnSVtw2I2iLJNASxlBCMkyuGZ8P5omJVmBUCvn6ndNDYQAKUgQpLjGRQKHRSX12m3OB0eP10mSVsaqoigJdlOH7CTtfnyB6ImqJu1QwHCEu2xENwghkZJknXnNEAAAwwpef6TeFQiEmPLqJpYTDxVWewPRQJAJR7hgmGVYwWrWywpiWEGnI3U0SZI4ywmRKG8x6cCpAhW8IKt+UYhBhECs6glCAACkOpb+cOld7RO1zhAAIRAEKWbITU2yEjged0i+QPT+2y65QJWO3Z5wUWmDtoWP5YRLhndrjUSg+ilkBbVsgwd6HVld6y2rcHfLbW1J8p37yvKPVOW2T9GM8IWBEHPNhH6xT4pPuFjNGD5ZQQ7bSS/yaejXPSsQYvV6SvueG9yBJ+6bkH6uhztqIzXJGmV4h82gsUKsFsOOfaV1rkB6iq2V3a5ce2DX/hPZmU6DjhIESZRkmiay0hxOh0lRUILdFAyxbm+4X6/sJKd5+56yOHViWSEzzZGRGufqxWUNUYa3taw+QwgkWR7QJwc0LwBn0FMGveNMVxYvSC53UFYUksBLK9xN3rDVovf5o+XVTf5AVJIVDMNc7oA/yAiC5A8yksxCiCkIAElBACAMUhQVDLGNTUEIIY5DmiIIglAU1cWEzCYdSeDqX+qaI0nc44uEIxwEACFAUbheR6kWDQhghOEUGSUnWkxGWlaQJMmhMAfhSeUwPcWmHZoCAEAImIx0x1MSb1qK3ekw8YKkoadBCDEMfvzVtldmX6P99M8N5dVu7TxRdYMb2CenNb0Z9FS/ntnb95ZQZItGTYiA0UA/8/oPyz+6pzV9Mqwwc9ZHack2bZlPkhUcw64a/xs17NxXqq1NSLJsNNBndUOkJttsFr0oShqiDYRQkpRvVu159K7L49/G78egPu3U62jcuDqGDxZvevmJq1vTp8cfue7eRar+qCBkM+vNJp2CUJThOU7EMEySZYfN6A8y5btfQwjt2FeqbYNkGH7YoE6YtnkJgMPHatRsg5aAEDAa6Nz2yaA1tSFpiojF52n4wCVJFkSZFySjgUIK8gcZhhUghKEIV9vgM5t0mWkOAscEUQ4EGUmSJVkRJVlRUHWdNxzmAAQ8LwmiJMmKIEiZ6Y5Eh0lWkCBKwRDr9oYoglAQQgilJttokqhvDDCsQFGE2UhnZTgxCBOdlgSH6aYHP6l3BbStGLwg2i2GdlkntymDnrp0eNdvftij7Rm1W42ffLvj9n+NjCs4CKIUifJ2q1HNsdVurOLAkWrtPGMEgJ4mO7dvsdbjabhkeNfVGw6rY2ipwwSHeVteycdfb7/9+hHavTV5w6OnzuUFyWEzaijVGAYrqjz333JJ7BAAQZA27ohjgyQJPBThyirdZ545qteRV4zt/cXS3RmpNo2Hk55qe3rOyluvHRHXRyBKciTK2ywGRVFaaZhon5PYpWNqQ2NA4y4QQsmJlvcXbxo9tEvcQ5WDYXbG3QstJl2i09I8XQ0HwGYxAAsAAEAIy6uaHrlrrMNmPHysJhRmNRYnhIDjW1Vrd8uuYotmKRCWExOdZtUO8Ic5LwkCJwg8tj80r8b5Zx7x4PVH4krckagwblT35qbvm68d9uGXW9JT7HLLwbwEjtEUMfnm+csW3a0RbVZW6b7/6a9LKhpTk2xGA2U00E67MSPVYdRTgijr9VSndklOmxFisKS8cdqkAeowtuXFiYGNMnxmmiM7s7W+xkmX9nrspaWnlOoW4bQb731ySb078Oid4866tyOE1m4ufP6tHwNBxmY1aPCCmoYMIZjdLFrZG4jWN/qTnVpRGBiEFEXc9cSXb/13eu9umYIgyQqyWw3qqzv9ioEffbVd+/RzksCtFsOIq1/75euHNc6MLyiqffK1FaXlrqQEi9FAmYw6h9WYnma3GHWCKNMU0bFdUoLdRFHk0ZK6664crBYExzHs3psvvuvxL+1xbh8mOs3T71rw3CNX3nrt8LPOJkIo70D5TQ98EggxyYnWlswHEAJBlCgKf/SucQCAg4XViva2gYBeR3XtFMdF4g8yB4/WmDSXWTDMTLqstyqj/akhTx99vW32q8vtViPDCqlJ1kSnBSDFajXoaFKSlPQUm9NuVIvtNnrCu/ef+ODVf8X10zbHvkOV9a5AZppd23DAcsKo/y0SO7B3Tt8e2XUuv3axY4tZHwgxl1775sN3jp18WZ/sDGdzd73LHVyz+cjjLy3DMGg26U5UuQkcIwhcFOVgmIUA2G0GHMcCQUaU5LAvOnJUtxuuvggAEAyzB45UaVd2CobZmVOHalQEPA3pqfaJY3qu3XwkLcXeouCAEIZh7bMTFyzevOLnAzdcPbhfr5wuHVNU/a68uunQ0ZoN24t27y+jKNxmNWhnMWAYdqKi4bsP77I3C83Yd6jCajFA7fITAJgMtMsduOq2960WvUFHh6PclmWPqSLqiEG5PbtmVNV4Ep3mFqdGQcmJlobGYJ/Lnpv79LQh/Tt0zElqPjXV9b4ffzn08rs/I4SMBupEZRNF4TiGCaIcirCKguw2I0Xi/iAjClLYGx5zSc9/XfVbMNgN1wyZ/erygBpq2fLDpEgiwW5+ed7qr1bkTR7b5/LRPVKSrKqiGopwm3cW/bLt6N78Cp2OSHSaNcyKEMCaOt+X796unvBccLRGW8BhOTHJacmOd5BKfWPAH2C0zdiCIA89ZYP786jhk2923PHgpxnZiUhBNoveH4g2uIOx+H8Mgwwr8IKI45gsK+Fqz1PPzejV9fed53mstF6W4/giIQAkgfdsVr4FAAAh/Oj1G/tf/KxDM5hXlhWrWS+K8tz31777yYZ2mYmd2ie3y3Q2+SLllU1Hjtd5fOGkBAtF4oqCYsohTRHNA7dSkqwsJ0YZYdnCu1WbYl2D3+OLaIdjKgoa1DpDQwxznpm2dPV+RVG0S8sAABx2YzDMvL7gF5omRElWA411NMnxIknidqtBUcsotAwcg8fLXLNnTZg+eWDzz2VF8XrDGfFisWVZMegpnY4SeNEdDaUkWtNO2fMgBAtfu2HApc8lOc0aIxBFOTnBwvHiQ//91mEzdshJapeV0C4rockTKSl3lVQ0hsKszWJQc/xjlgvqf6cmOcHCCyJO4N8uuKu5Jkjg2Hcf3jVq8itdNRekghBBYAkOs9cfWfjl1gWfbyYI3GE3BkMsx4s4BiGENpsB06y/BCHwBqKTLuutPklJktduKbRobvUsJ4we0jnuyRpHj9dxvKgZ7AR1NNG5w0ml9U+ihs++23n7Ax93yk0jCFwt10FRxGk3Y9BTaj3o8mrPp4tn3XLt8JZ6awmbdhRZTHFca6IkGw105zMOaOjXM3v2o5Nfnb+mR+d0DblRURCOYw67SZLlylrPiSp3KMwZDBRF4gSOp6fYkeZbhGGQ56WqWu/W5f+J1bA+VlrP8XHy8I0GOq5r6jRkpTle/M+UJ19boX1H6k3paFJHkwiBmPaLYVBVMbRtumqJrVpX8M6Zo8600ZIEzseLF1KBEIAA0DTpC0SnThrQXD7q3yvnyYevfGvRL+2yEjWIX1YUksTTU22yjMoqG0vKXaEIZzLQNEVgGHTaTdpl41T+rKj2/Lj4/jPLi48cnPvofRPnf7qxQ3ZiPCM3okiCJgmVT6NRnsAxs1EX4xrtMQSCbILD9MW829RP6huDTd6wRjI7OCkFx6lSDwDYua9Mp5nTLQqyxazv1C5Z/fPPoIYvl+++ddZHMV5oqZkaW1VR410096Zbrh32e6/CcsKOvaVxD1biODG3Q4rVfBbp4JUnrglH+U++3p6RatceKkIIxzCcxgAAza+oLbHgGBZhOF+A+WLebcObGY127C3TtuELgmQ16zucEUccF7NnTXQ1hT77bkdqkq01xfLVw9db3z+OY4EQI0ny/bdcclbjvKIgp92EYb+jTqGioH49T9ciX3p8SkFRzZbdxVlpTqT5nNXMRdXV9zumBsdCYba2wf/N+3dMuvTsqRBznp5aVNawPa8kLcUW1wGPAFD9cVqNmgGDUJTlJm944iW9333xutjIC4trWU7AsBbnDkKIY1jcI04kSd6y+7i2PSvMsIP7tbeYT7a54LUhv1qZd+M9C1vNC02L5t54DrwAAKip9wdCbFyxKhBmx47q3pKIPf/F62dOHRIKsywnnE+BvdOgRnM0ekI8L339/h3/uvo3PVYU5Z17S82ahoYIww/sk6Pt2W4J81647uoJ/QMhJsrwrTdVxIU6X25PyGigv37/zpacdmOGdY0yPMuJrX+WhrMdkw0h/HHxrCdnTayq8zIM30q/T2sAIYQQ1jX4MQz7dsGd1145qKWWGIQrP773uqsG1zX4eV76o8YA4cnMqHpXcO5T075497bmhzwfOFKt/eKIouSwG9vHkyhrG/zuprBOs0oQwwqXDPvNvXJhqeHbVXtvuPPDjp3SyFbwQmWNZ8GrM9XjMc4B+w9XQAxqG+RVK/qwAR012iycc+O3H95FEFiTN8xywnmuANXj7Q9GA0F26qT+e9c8fdqm5A1EKmo82meiS+J5nW66+O1bP3/nNrWql0p550x66m+jDN/kDcuycscNo/eufnrMsC4ttTcZ6XkvXl9R6RZFuTVPkuXE5ETLWYvZQAhnz5r4+bzbLGa9xxc5mdx5HpODQSjJSmNTsLEpdOO0ofnrnp1+xUDtn5Ak/uFrMz947QaGE92eMELnVaBV/a0vwNS6/OMv7rFvzdP//tfI5hVlEUIbdhzVjmiIMHz33HS7ZlYeAKCqzusPRjWmQI1g7tH5t/i3C6hQfL501823v5+Zm6YoCsNp2GOBgkB9o//9l2+47bo4DnYNbMkrYVlBu3ieoiCDjopFNLSE0UM671vzzLLV+R9+ubWq1gMAUMvAash1zQEhlBVF4KUoKwAArGbdNRP6z7hy0PCzeZ73H6qMMJzFrEeoBVcWAGGG73V+DuDLL+6xq+/sz5fuWvz9jqpaH4FjFrOeJPBWahmqDUKUlGiUk2SlQ7vk6yYPmnJ5n7g5oACAW64dFgxFX353jSpgG3QUUlMzIUT/axGDAPoCkdFDO2vEnl0zof+YYV2/WLrr0293NLgDOIYZDDRJYK2eGiArSBJljhc5XjSb9LfOGD510oDBfeNnpsRww9VDhg3o9N7ijd/8sDcYYm0Wvcmow7BWhflCCBQEJElmGIHjRZomJo/tM/OaISPOVt6+vjFYUFRnNtIapih/gBk2UGurU7FhW5GCkEZYqiwrBI53bRYae6EOtvv6hz3/uuW9rE6pFEnENdsEgsyrs6++c+boc74cy4n9xj0fDLPaUjfDCokOU/4vz2pUWGmOUITdlleyY2/pxu1F1fU+SZINejoUYY162mSkY/eFQShJcijKyZJiNNIMIxgMVJLTMmJw7rCBHUcM6qhx2OkDz37zxbJdGgd/S7LMsmLh5heSzrCNnQOiDJ9/pGrNxoL1W495/RGOFzEIGVYw6CnVVh9LN+QFyR9kKJIgSVwtZJyV7hg9tPPYUT16d8v4vdpNeXXTyrUHCovrjpXUu73hllSbyhrPkvf+PaNlqT6GUITbe7Di540Fm3cWuz0hUZIhBAwr2CwGg576bWowKAhyhOEkUTHoKYbljQY6OdE6tH+Hi4d1GTaw4/kch1te1bT/cOV3P+07WFgdCrM4jgmirNeRZqNOPTGAJHGWFWiapCjCF4giBalml6QEc7+e2ZeP7jFsUKcOLR+3uX7r0StvfS892abx/tS7/Bu+e1SbHSRJHnzFK/Uuv0aSTiTCpaXY8tc9G5MsLgg1IAQa3IHmVtkWmp26OATaynZcqNVTYQv1/WNHDCGEKIo4hzxfNam8vMpzoLBSFOWael9DY1CUZHVLhRBazfr0VFuiw2wy0t1z0zPS7Okp9riniQAAIlFeQSiuVBqvmN/vBssK1fW+0kp3ZbUnGGbqGgL1jQGOl1RyQAA47aZO2Uk6HZmZ5uiWm+q0m9JSbK2kVA1EGB4g4PVHIlEuliOqnh8LEDCbdMmJlt8lpYciXENjoLyqqbSiMcoIZZXuRk9IkhQAAUAIAmi3GVKTrUlOs9ViUM+kTk6w/LHPs6beV+cKFJU11Nb7auv9VXVeCGGE4UVespj1BIHRNNmpXVKi09yxXXJuu+TEBHNriJ7jRUGQIKaVfooQMpt02k9MUVAkymm3UR0rzdMg/zHH4f4NEYvPO3ku8j8fyqmwu3/6Hf21U6PueQghSVYokmh9UPbfCm3U0IY2tOEs+OeRWRva0IY/AW3U0IY2tOEsaKOGPxWiJLcycPgcwHKiqFkL6Exon5F7gcDzkiwrF7Ri2t8fsqxIF3IxnD/++mLz/z/g+AnXus1Hfvr1cMmJRpomLhvZ/cpxfcaN7hFrwPPiq/PXBMJM/545scKwVbXetxetxzE4ZXy/EYNzAQBef+S1+WtkWR47umfsFAOOF3/eUPDdqr17DlbIsjKwT84lI7rdccPIWBKRP8g8/+YqXpDuu+WS7p3TPL7Iq++u5kXZF4i+9uQ1WelOAEBRSf2HX25x2k1RVlBkRc2VjES59llJj9w1DkIgK8rbC9f7AlEMgwwrQgitFl1KknXapIFx421i+GVL4Q/rDq7ddAQBlJXm7Nsz6z93X35a8pXXH3l53mqLSR8Ks3fffHEspB8AUFbpnvfJhkS7meF4WUYYBADAUJi9//ZLu3ZKPVJU+9GSrU6nOcrwCCHVIB8MMQP7tLv9+pEAAFGSX563WpJkhADLiRgGU5OsiU7zlMv7trJqsS8QfemdnyxmPS9IsSAuSZQVhP77yJXNn0NljWfu++uSE83hCPfYPeOb586dqHS/99mm7XtKGj0hk0F3Ub/2/75h5NBTYXgMK7w6/+dwhLuof4eYE/eDzzdX1XppimDY32LwwhFuxpWD1Bzi2gbfGx/84rCbGJbnBclspE1GXZ8eWWNHdW/l1JyJNmq44Fj96+FbH/7U44s4bMbBfTscLan7/PudH3+9beHcG2MpZMUnXM+//gNQ0Kw7x8ao4ftVe+e9vxYQeOzwxS27it945ycAYd8eOeon/iAzZtrrpeUuHMeGDewEMbhh+7Efftr3yTfb9/78tJqYvH7r0XnzfgYm+uXHr44y/NgZbx48cMLiNL/74vWxU8Lf+XjDos822RPMAACSPFkOr8nlv276MNXC3+QJP/XaCr2OxDCMpklBkARRAgAu/HLbjh8eb02Yw5qNBROvfzslxd6nZyZAYPPO4h3bj634Ob9wy4s2y28v1Q2zPlq3qdBm0QeaQsmJlsfvmxD7asnyvPc+WGtxWhAARgMty4qsKIEg88xDVwAAHn952dpNBXabEYOY+v5ACNxVTdbHpqg/L69qen7uSrvDLIiSxaQPRTiOE0xG3ZfLd6/58kHtcvgqtu0ueXveanuqXZaRjiJUA34kyjvshjlPTY01UxQ0/vp3SspdFrMu0BgYNqhTrOxVZY1nwPgXAQDtMhMG922/dffxxV9t/WpF3obvHx15US4AoLis4aU3fwQsb/vvDPUnoTD75KvL1SQU8tRJrgghjyd049ShapulP+2f997P1iQbAshs1AXDLAZhKMR+Pv/2G6cNjXtfZ0UbNVxYVFQ3Tb9zgY4mJ4/ru3DOjcmJFn+Quf/pr7blldz+yOLxF/dUQ26KShpMFj1NETc3yx/Zf6QqOcNJU8TQUwEtR4rqrElWksDHjj65G8y876OSE670ZNu3C+9Sj3jZuvv43Y9/UdfgLzxe17dHFgDgYGGVMdF85bi+tS7/9Ds+qHMF+g3ouHbJg7FSrgpCx0802BJMo4d2WbrobvzUwbOSLMf8V5W1XgCBXk9/u+CukRflyoryxEtLl/2c724KrttUeFWzYpAt4ZHnv0tMsqQkWZctusdooOtdgc27imvqfeEIF6OG737cu2VncYfsRKfDWE7gjZ5w8x72HSq3JdpGDO703cK7CAJXk8d5XlS38YoaT4LDfOW4vh+9cVPM9SZKciwWI7+g0u4w63Tk9h9md++cJkry/U9/veqXg4eP1VTX+zRCj2LIP1JpSbImOsy7fnrSaTepTwkhJIj/U1p2zntrSisaO7VPtlsNRxVU5wrEvnrn41/DYTYnM+HjN2/u1zNbFOWfNxYUFtfGYrRKyxv1Rpp2mKZN6q9+cqy0gSJwUVaWzP/3xEt7nUpUQywnxgJnDhyptibbenbNWPfVQ0YD3eAOXjrtjaCZmfvBujZq+JvipXdWUySOYdjHb9ysptbarYYXHruqy8inKIrIO1g+ZVxfAMDO/aUkiet0VKxiJcMKBcdqRUkeeVGuuicrCG3NO07gWKd2yWpXhcV1W3YV4zi26I2bY0c/jRrSOX/9c7FYY0VB2/NK7FZjfWPgypvnB0PMuNHdly66t7m33+MNl1W4LSa9LMv7DleIoowQkBXFZKAHnqyMCHbvLyMJ3KCnaAqPRLlQmPUFGIblCRwf2Lddax7FpMt6v/HeGpIgbn/080tHdJ0wpmfzNDMAgD8QvfOxL0iSWPTGTfWNgTse++JQYbV6xhwAIBhii8tcNE0kOS2iKDOsAAEUJVmV1StrPE2esNlER1l+z8EKUZQQAqIkO23GPj1O5nEeOlqDADLoKQhBOMIFQkwgyKgFoxNaOCW8ORBCO/eWGfQ0TZH5BVXqkYgIIEGQLxn+23Hn5VVNz7z+Q4LT9Ok7t27PO36kuC6/oDL27bRJA+e9vToQZh994fvJl/WZMr7vlMv7Trm8b6zBph1Feh1lNulielbJCRcvyhaTrqTClVJgiTA8BiHHib27Z6oJmgwr5OWf0NNkRqpdkhR/IFpS3ggAcrmDzZXW34s2ariAEER5V34ZQmDiZb2ap9xHGE5VGO0WIziZfFkGARzQMzum9Da4g41NQVlRYpkXvkC0rMINARzYp50aQnOgsEpSlES7sff/VlVsXhrT7Q1V1HjsNmNljcfrizgd5ooqryTLzeMaq2q9gSDbPjthf0HViCtfwzAIIBRcgQEXd9+39lm1za/bjqon2U+44R0cx3Q6UkeRBIG//fwMjZprzfH6M9MH9Wn31qL1azcVfLdqj9mk75iT+P3Cu2MnVlzz7w84Xpx0We8xw7rm5Z8QBamyxuMLRNVHV9Pg8/mjWRmOZT/v/2TxRqinkCABhq8u+SAz3VFW6RZEyWiwbNx+bNnqfAwCAKHQGLji2mE/Lr4fAKAoaNOOIrVu0sDxL1rMOgCgjiZIkvjs7Vutlvi2hsamUHl1k91qCEXZSTPfQQDgGMZHOZPN2FjwjrqBI4TGX/8WReI3Th06tH+H4tIGSZKPldYLpyrfDhvYcd/2l+d8sHbb7pLNO4uffG25Xket+/ohlYJZTtyxrxTDYK+uGbGsqj0HyvU0aTTSz8xZybAiReIIIcEXWfrNw1MnDQAA1NT7AsFocpJ1x57S9H6P2Kx6AscxDOvXM+ft52a0ZmrOijZquIBACAmCTJJ4MMg0//yld1Y7bEaOl3p3zwAA1DcGal1+SZIvGfHb5rMtrwRAIAjSoFN78okKtz/I4DhUlVK1fwLDCBxrcAdjNjCvL7I7/4SC0KRLe2MYPF7mYllBT1MkQbz0xNUfLN58vLzh3tlfLnr95ti18vJPQAyEo/yqxbNy2ycLggwAECU58RSdhSNcUWkDQeBOh+n6qy7alldSUe0OR7hVn89qZWJSMMySBD7tioHTrhhYVtG4/3DlC2//dOBI1esL1n0450YAwJpNRzZvP5aTnaijyW9/2PvzxsPpqfYoy7s9IZUaCo7V8oIYDLGP3TO+c4fkUJjjRdFhNWak2QEAO/aUQggUBe1YNTs50SqKMgBAFKWkU/a/+sZAXYPfaKRz26fcOmP4D+sOeX0RhhPWf/Nwz3jFDlSUVjSGIqwgym89N33iJb1V54Iky2ajLibYv7lwfUWNNyPNHmX4JcvzVq07mJJkbXSHvL5IarKN5QSelwb0zlm68O4mb7jgWM3Tc1aWlDdeecv8qr2vkyTe5Au73CFZQSNPFSiUZGXzzmJBlEYMyp3z9FRwKmIVIRTTBwuL63hRFiXl4mFd0pJt3/+0XxDE7p1T1ix58HyiMNuo4QKCpogJY3p+/PW2/IKqBZ9vnjl1qCTJc95fu2VXMUHgyz66R9WxOV6UJNlmNWzaWTxjymCLWb/3YPmbH/5CkYTdYuzb46SmkF9QpeYaxLIwx43qoRbg/s8L37/+7DSnw1xV6x07481AmeuK64dPurQ3AOBIcR0vSCwnbF7+n84dUo4er/v+x31Lluc9etfluadKfW3dXWIy0CYDraNIjhNlGQEAZEVxNQUzUh0AgOo6n8cX0euo15+ZfvWEfg2NwYETXmB5obLGq1JDIMh8+u12kiQmjOl11pIzN9//8Ybtx0YN6fLVB3d0bJdMEDim7uwQAgCiDH/1be9lZSWIopyXf2LNxgKTkbZZDFGGP37CpZ6UsXXXcR1NSpI8e9aE03JzEELb95ToaNJi0pMEwXHiKSsAqHcF1BqTRaUNgihLIfY/94wfPbTz5HF9L53+BsMKvkBU7aS2wbfsp3xZUW69bsRZfS6HjtYgBZEkbjGd9FCoF29sCuVkJmAYLK1ofPLV5ZnpDgjAr9uOLlm+26CnEhMs1bXeUIRLTQZLlu2e9fTXmWmOrz+4c2CfnFFDOptNevVsRzUJteBYDUJIkuQh/U4Sbl2Dv9ETomkiwWFCCAmCpJ61IghSOMqpmUfb846TBA4B+OiNm2mKaJ+d+MAz3xSVNkSivCoN5R04sXVHcXq64/qrL2p93HhboPSFBcsJI6+ac6yknhckq0Vv1FERhjebdHodtfH7R9NS7Gql8KtufW/vwQqIQZblHXZTMMSq6S4rPr131EWdAQCyrGT0f9R1wmVOtTcceitWBWjFmvwZdy/U0SRAACewcISjKWLqpAEfzpmp11GyrKT0fshzvD67b7vKvXMBAI1Nocz+j4qBCNBR4YqFJiPd2BRK6f0QSWAURUQZAag5YwAAd2DA5f32rX0GAPDoC9+9+cJSYDWU7Hu9U/tkAMCYqa9v/nk/oEn3iQWJTvPTc1a8/MQHQJ9wvHCeeorBafh5Q8GVt8xXzzdz2o3+IKMoqHPH1M3LHtPTZFKvB4OVbmt20tKP7slOd0iysnX38VlPfy03Bf9938RFb9wUDLEJPR6Q3MGRE/ptXfH4aZ0XlTZ0GzZbZ9JBANkIC8Cpcm6e0OUzhq/96iEAwA33Lfpq4XqQaHUdfls1T7Qb9J/KwioiweIvfs9koGfctfC7hd8DS0qg9uMzSyQoipI96PHaSrfJbowyAhJEoCaPhlnMYRKqFnG8aEq9FQDoTHcs+/je5EQzjuO/bC68f/aXIBB9fd7tj949rryqqcvIp0gCwyBmNutkGYmSJAhy3uqnenRJBwCMmPLajg2HgUlXc+AtVRp6fcG6/zz0qSUrkeVEkeGBKgUoCPjC67e8eNmIbgwrJPV8IFrr7TWs6+GNzwMA6lz+jJ4PgUDkmpvGLPv4HllRDO3uEqpLOw0bUrLjldYv3TZquODgePGXLYWbdha7PSGbxZCZ5lj83c4mb0iSlZIdr6j52hwvrttcuHNvmcsdECQ5wWEa1Kf9pSO6xk5kkiRl9YbDLCtkpDlOy+0vKKr9ZfORY6UNioIyUu0TL+kV82jIsrJ09X5JlPv0yOpxqlLu/sOV5dVNPn90yuV9U5KswRCzZuMRvZ5SBfJYREA4yo0cnJuTmQAAyMs/UV7dZDLoLh/TkyJxAIDLHfx12zGeF6deMcBmMRwsrC48VpucbL1sVPeWdqX8gsqNO4oKi+pYXkhyWgb0zpk+eaDRQDc0Bpb/nJ+SZM1Md8TUE0VBq345yPFih+ykQX3bBYLMr9uO8oI0uF/75pEOKiprPPkFVSSBI4AUBSF0ssYEy/GjhnRRTSFbd5dU13kdNuPEU6V0yquadu0vk2VlyuV9rRbD7vwTpRWN7bISz3qggyBKazYeUROlmj+lSJTv3jmtX8/sugb/irX5SQmWXl0zY3XfeV5ctf4QjsG0ZPuQAR0AABXVni27i7fnlUQZniTx/r1yrhjbJ2Z7Xr/1qNcXsVr048f0VPvfd6iissZDUYRaMkP9UJYVBMDksX1oiuB4ccWaAwihfj2zY9fduL2oyRcGCM2YMlhR0LKf9/OcOHp418zfc8BXGzX8BXB7wo+/tNRi1r353AziH5iT14b/H/D/AO+xvsIfPhppAAAAAElFTkSuQmCC";
+
+/* ===== AeroTech styled PDF engine (matches the source Word forms) ===== */
+function aeroDoc(cfg){
   var J=window.jspdf.jsPDF;
   var doc=new J({unit:'mm',format:'a4'});
-  var pw=210,ml=15,mr=15,mt=15,lh=6;
-  var y=mt;
-  var tc=[30,30,30],mc=[110,110,110],bc=[210,210,210];
-
-  doc.setFont('helvetica','bold');doc.setFontSize(14);doc.setTextColor(tc[0],tc[1],tc[2]);
-  doc.text('Operator Proficiency Check',pw/2,y,{align:'center'});y+=5;
-  doc.setFont('helvetica','normal');doc.setFontSize(9);doc.setTextColor(mc[0],mc[1],mc[2]);
-  doc.text('AeroTech  |  Rev 1.1',pw/2,y,{align:'center'});y+=8;
-  doc.setDrawColor(bc[0],bc[1],bc[2]);doc.setLineWidth(0.3);doc.line(ml,y,pw-mr,y);y+=6;
-
-  var trainee=v('trainee-name')||'___________________';
-  var arn=v('arn')||'___________';
-  var ttype=v('training-type')||'___________';
-  var acReg=v('aircraft-reg')||'___________';
-  var gTime=v('ground-time')||'—';
-  var fTime=v('flight-time')||'—';
-  doc.setFont('helvetica','bold');doc.setFontSize(9);doc.setTextColor(tc[0],tc[1],tc[2]);
-  doc.text('Name:',ml,y);doc.setFont('helvetica','normal');doc.text(trainee,ml+14,y);
-  doc.setFont('helvetica','bold');doc.text('ARN:',115,y);doc.setFont('helvetica','normal');doc.text(arn,123,y);y+=lh;
-  doc.setFont('helvetica','bold');doc.text('Aircraft:',ml,y);doc.setFont('helvetica','normal');doc.text(aircraft,ml+18,y);
-  doc.setFont('helvetica','bold');doc.text('Registration:',115,y);doc.setFont('helvetica','normal');doc.text(acReg,138,y);y+=lh;
-  doc.setFont('helvetica','bold');doc.text('Ground time:',ml,y);doc.setFont('helvetica','normal');doc.text(gTime,ml+24,y);
-  doc.setFont('helvetica','bold');doc.text('Flight time:',115,y);doc.setFont('helvetica','normal');doc.text(fTime,136,y);y+=lh;
-  doc.setFont('helvetica','bold');doc.text('Initial or recurrent:',ml,y);doc.setFont('helvetica','normal');doc.text(ttype,ml+36,y);y+=8;
-
-  function secH(title){
-    doc.setFillColor(240,240,240);doc.rect(ml,y,pw-ml-mr,6,'F');
-    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
-    doc.text(title,ml+2,y+4.2);y+=8;
+  var ML=12,MR=12,PW=210,PH=297,CW=PW-ML-MR,RW=44,LW=CW-RW,RX=ML+LW,BODYTOP=24,BOTTOM=280;
+  var C={light:[220,233,246],label:[214,228,242],teal:[6,135,166],grid:[107,107,107],
+         text:[26,26,26],muted:[107,107,107],green:[41,128,77],amber:[158,79,13],white:[255,255,255]};
+  var P={doc:doc,y:BODYTOP};
+  function sf(style,size){doc.setFont('helvetica',style);doc.setFontSize(size);}
+  function tx(x,y,s,align,col){col=col||C.text;doc.setTextColor(col[0],col[1],col[2]);doc.text(String(s),x,y,{align:align||'left'});}
+  function cell(x,y,w,h,fill,stroke,lw){
+    if(fill)doc.setFillColor(fill[0],fill[1],fill[2]);
+    if(stroke){doc.setDrawColor(stroke[0],stroke[1],stroke[2]);doc.setLineWidth(lw||0.25);}
+    if(fill&&stroke)doc.rect(x,y,w,h,'FD');
+    else if(fill)doc.rect(x,y,w,h,'F');
+    else if(stroke)doc.rect(x,y,w,h,'S');
   }
-  function rows(arr){
-    doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
-    arr.forEach(function(r){
-      var label=r[0],val=r[1],isG=r[2];
-      if(isG){doc.setFont('helvetica','bold');}else{doc.setFont('helvetica','normal');}
-      var lx=isG?ml:ml+5;
-      var lines=doc.splitTextToSize(label,pw-ml-mr-22);
-      lines.forEach(function(line,i){
-        if(y>267){doc.addPage();y=mt;}
-        doc.text(line,lx,y+3.5);
-        if(i===0&&val&&!isG){
-          doc.setFont('helvetica','bold');doc.text(val,pw-mr-2,y+3.5,{align:'right'});doc.setFont('helvetica','normal');
-        }
-        y+=lh;
-      });
-      doc.setDrawColor(bc[0],bc[1],bc[2]);doc.setLineWidth(0.1);doc.line(ml,y,pw-mr,y);
-    });
-    y+=3;
+  function wrap(s,maxw,style,size){sf(style||'normal',size||9);return doc.splitTextToSize(String(s==null?'':s),maxw);}
+  function header(){
+    try{doc.addImage(AERO_LOGO,'PNG',ML,7,40,40*60/350);}catch(e){}
+    sf('bold',11.5);tx(105,14.6,cfg.title,'center',C.text);
+    var boxes=7,bw=5,bh=6,bx=PW-MR-boxes*bw,by=8;
+    sf('bold',9.5);tx(bx-2.5,by+4.2,'ARN','right',C.text);
+    var arn=(cfg.arn||'').replace(/[^0-9]/g,'').slice(0,7);
+    for(var i=0;i<boxes;i++){cell(bx+i*bw,by,bw,bh,C.white,[60,60,60],0.3);
+      if(arn[i]){sf('normal',10);tx(bx+i*bw+bw/2,by+bh/2+1.5,arn[i],'center',C.text);}}
+    P.y=BODYTOP;
   }
-
-  var ac=Array.from(document.querySelectorAll('[data-check]'));
-  secH('Knowledge requirements');
-  rows([
-    ['Fatigue management limitations - CAO 48.1',ac[0].value||'—'],
-    ['Company operations manual - Operations Manual',ac[1].value||'—'],
-    ['IFR / VFR knowledge requirements','',true],
-    ['Privileges and limitations',ac[2].value||'—'],
-    ['Proficiency check requirements',ac[3].value||'—'],
-    ['IFR and approach recency requirements',ac[4].value||'—'],
-    ['Interpreting operational and meteorological information',ac[5].value||'—'],
-    ['Application of takeoff minima',ac[6].value||'—'],
-    ['Alternate / holding requirements',ac[7].value||'—'],
-    ['IFR or VFR procedures for all airspace categories',ac[8].value||'—'],
-    ['Departure and approach instrument procedures',ac[9].value||'—'],
-    ['Operations below LSALT / MSA for day and night operations',ac[10].value||'—'],
-    ['GNSS and PBN standards',ac[11].value||'—'],
-    ['Requirements for circling approaches',ac[12].value||'—'],
-    ['Adverse weather conditions',ac[13].value||'—'],
-    ['IFR planning or VFR planning',ac[14].value||'—'],
-  ]);
-  secH('Flight component');
-  rows([
-    ['Pre-flight','',true],
-    ['Flight planning accurate and complete',ac[15].value||'—'],
-    ['Performance knowledge and application',ac[16].value||'—'],
-    ['Perform pre-flight actions and procedures',ac[17].value||'—'],
-    ['Ground operations, take-off, departure and climb','',true],
-    ['Complete all relevant checks and procedures',ac[18].value||'—'],
-    ['Plan, brief and conduct take-off and departure procedures',ac[19].value||'—'],
-    ['Conduct instrument departure',ac[20].value||'—'],
-    ['Conduct an engine failure below turnback height',ac[21].value||'—'],
-    ['Conduct an engine failure above turnback height',ac[22].value||'—'],
-    ['Enroute cruise','',true],
-    ['Navigate aircraft enroute using ground and satellite navigation systems',ac[23].value||'—'],
-    ['Perform navigation systems integrity checks',ac[24].value||'—'],
-    ['Identify and avoid hazardous weather',ac[25].value||'—'],
-    ['Use correct radio procedures',ac[26].value||'—'],
-    ['Manage relevant aircraft systems',ac[27].value||'—'],
-    ['Manage fuel system and monitor fuel plan and usage',ac[28].value||'—'],
-    ['Conduct glide approach to landing',ac[29].value||'—'],
-    ['Activities and manoeuvres','',true],
-    ['Perform full and limited panel instrument flying',ac[30].value||'—'],
-    ['Unusual attitude recovery',ac[31].value||'—'],
-    ['Engine failure drill',ac[32].value||'—'],
-    ['General aircraft handling',ac[33].value||'—'],
-    ['Descent and arrival','',true],
-    ['Perform a descent or published arrival procedure to the aerodrome',ac[34].value||'—'],
-    ['Track to the holding fix and conduct holding pattern or sector entry',ac[35].value||'—'],
-    ['2D approach','',true],
-    ['Prepare for the approach',ac[36].value||'—'],
-    ['Conduct approach',ac[37].value||'—'],
-    ['Conduct missed approach',ac[38].value||'—'],
-    ['3D approach','',true],
-    ['Prepare for the approach',ac[39].value||'—'],
-    ['Conduct approach',ac[40].value||'—'],
-    ['Conduct missed approach',ac[41].value||'—'],
-    ['Circuit, approach and landing','',true],
-    ['Conduct visual circling with at least 90-degree heading change',ac[42].value||'—'],
-    ['Approach stable IAW company procedures',ac[43].value||'—'],
-    ['Perform after landing actions and procedures',ac[44].value||'—'],
-    ['Shutdown and post flight','',true],
-    ['Park, shutdown and complete post-flight administration',ac[45].value||'—'],
-  ]);
-  secH('Emergency procedures');
-  rows([
-    ['Engines, propeller, and fuel',ac[46].value||'—'],
-    ['Electrical',ac[47].value||'—'],
-    ['Fire or smoke',ac[48].value||'—'],
-    ['Flight controls and stall warning',ac[49].value||'—'],
-    ['Navigation and flight instruments',ac[50].value||'—'],
-    ['Passenger evacuation and emergency landings',ac[51].value||'—'],
-    ['Cabin or cargo door warning',ac[52].value||'—'],
-    ['Abnormal and emergency passenger PAs',ac[53].value||'—'],
-  ]);
-  secH('Non-technical skills');
-  rows([
-    ['Communication',ac[54].value||'—'],
-    ['Situational awareness',ac[55].value||'—'],
-    ['Threat and error management',ac[56].value||'—'],
-    ['Decision making',ac[57].value||'—'],
-    ['Workload management',ac[58].value||'—'],
-    ['Task management',ac[59].value||'—'],
-    ['Monitoring and cross-checking',ac[60].value||'—'],
-    ['Fatigue management',ac[61].value||'—'],
-  ]);
-
-  var comments=v('comments');
-  if(comments){
-    secH('Comments');
-    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
-    doc.splitTextToSize(comments,pw-ml-mr).forEach(function(line){
-      if(y>267){doc.addPage();y=mt;}
-      doc.text(line,ml,y+3.5);y+=lh;
-    });y+=3;
+  function footer(page,total){
+    sf('bold',8.5);
+    if(cfg.footerLeft)tx(ML,289,cfg.footerLeft,'left',C.text);
+    tx(105,289,'Revision: 1.1','center',C.text);
+    tx(PW-MR,289,'Page '+page+' of '+total,'right',C.text);
   }
-
-  if(y>240){doc.addPage();y=mt;}
-  secH('Completion certification');
-  doc.setFont('helvetica','italic');doc.setFontSize(8);doc.setTextColor(mc[0],mc[1],mc[2]);
-  doc.splitTextToSize('This is to certify that the above-named person has completed the emergency procedures training and assessment for a Part 135/138 general emergency procedures check.',pw-ml-mr)
-    .forEach(function(line){doc.text(line,ml,y+3.5);y+=lh;});
-  y+=5;
-
-  var sigW=(pw-ml-mr-10)/2;
-  var sigBoxH = 18;
-  [['inst','Check Pilot'],['ts','Candidate']].forEach(function(pair,i){
-    var sid=pair[0],label=pair[1];
-    var sx=ml+i*(sigW+10);
-    doc.setFont('helvetica','bold');doc.setFontSize(8);doc.setTextColor(tc[0],tc[1],tc[2]);
-    doc.text(label,sx,y);
-    doc.setDrawColor(bc[0],bc[1],bc[2]);doc.setLineWidth(0.2);doc.rect(sx,y+2,sigW,sigBoxH);
-    var sigData=getSig(sid);
-    if(sigData){try{doc.addImage(sigData,'PNG',sx+1,y+2,sigW-2,sigBoxH);}catch(e){}}
-    doc.setFont('helvetica','normal');doc.setFontSize(8);doc.setTextColor(mc[0],mc[1],mc[2]);
-    doc.text('Name: '+(v(sid+'-name')||'___________________'),sx,y+23);
-    if(sid==='inst'){
-      doc.text('ARN: '+(v('inst-arn')||'___________'),sx,y+28);
-      doc.text('Date: '+(v(sid+'-date')||'___________'),sx,y+33);
-    } else {
-      doc.text('Date: '+(v(sid+'-date')||'___________'),sx,y+28);
-    }
-  });
-
-  return doc;
+  P.addPage=function(){doc.addPage();header();};
+  P.need=function(h,redrawCheck){if(P.y+h>BOTTOM){P.addPage();if(redrawCheck)P.checkHeader();}};
+  P.titleBand=function(s,h){h=h||7;P.need(h);cell(ML,P.y,CW,h,C.light,C.grid,0.25);sf('bold',9.5);tx(105,P.y+h/2+1.5,s,'center',C.text);P.y+=h;};
+  P.caption=function(s){P.need(6);sf('normal',9);tx(ML,P.y+3.4,s,'left',C.text);P.y+=6;};
+  P.vspace=function(h){P.y+=h;};
+  P.infoAircraft=function(name,ac){
+    var h=8;P.need(h);var w=[26,64,36,30,30],x=ML;
+    cell(x,P.y,w[0],h,C.label,C.grid,0.25);sf('bold',9);tx(x+w[0]/2,P.y+h/2+1.5,'Name','center');x+=w[0];
+    cell(x,P.y,w[1],h,C.white,C.grid,0.25);sf('normal',9);tx(x+2,P.y+h/2+1.5,name,'left');x+=w[1];
+    cell(x,P.y,w[2],h,C.label,C.grid,0.25);sf('bold',9);tx(x+w[2]/2,P.y+h/2+1.5,'Aircraft Type','center');x+=w[2];
+    ['C208','PC12'].forEach(function(opt,i){var sel=(ac===opt);
+      cell(x,P.y,w[3+i],h,sel?C.light:C.white,C.grid,0.25);sf(sel?'bold':'normal',9);
+      tx(x+w[3+i]/2,P.y+h/2+1.5,opt,'center');x+=w[3+i];});
+    P.y+=h;
+  };
+  P.kvRow=function(pairs){
+    var h=8;P.need(h);var x=ML;
+    pairs.forEach(function(p){var lab=p[0],wl=p[1],val=p[2],wv=p[3];
+      cell(x,P.y,wl,h,C.label,C.grid,0.25);var ls=wrap(lab,wl-2,'bold',9);
+      if(ls.length===1){tx(x+wl/2,P.y+h/2+1.5,ls[0],'center');}
+      else{tx(x+wl/2,P.y+h/2-0.4,ls[0],'center');tx(x+wl/2,P.y+h/2+4.0,ls[1],'center');}
+      x+=wl;cell(x,P.y,wv,h,C.white,C.grid,0.25);sf('normal',9);tx(x+2,P.y+h/2+1.5,val,'left');x+=wv;});
+    P.y+=h;
+  };
+  P.checkHeader=function(){var h=7;P.need(h);
+    cell(ML,P.y,LW,h,C.teal,C.teal,0.25);sf('bold',9);tx(ML+2.5,P.y+h/2+1.5,'Check items','left',C.white);
+    cell(RX,P.y,RW,h,C.teal,C.teal,0.25);tx(RX+RW/2,P.y+h/2+1.5,'C / NYC / NA','center',C.white);P.y+=h;};
+  P.subRow=function(s){var ls=wrap(s,CW-5,'bold',8.7);var h=Math.max(6.5,ls.length*4.6+2.6);
+    P.need(h,true);cell(ML,P.y,CW,h,C.white,C.grid,0.25);sf('bold',8.7);
+    var ty=P.y+(ls.length===1?h/2+1.4:4.0);ls.forEach(function(ln){tx(ML+2.5,ty,ln,'left');ty+=4.6;});P.y+=h;};
+  P.itemRow=function(label,value,desc,boldLabel){
+    var tw=LW-7;var head=wrap(label,tw,boldLabel?'bold':'normal',8.7);
+    var dl=desc?wrap(desc,tw,'normal',8.3):[];
+    var h=Math.max(9,(head.length+dl.length)*4.4+4.2);
+    P.need(h,true);cell(ML,P.y,LW,h,C.white,C.grid,0.25);cell(RX,P.y,RW,h,C.white,C.grid,0.25);
+    var ty=P.y+4.8;
+    if(!boldLabel){sf('normal',8.7);tx(ML+2.6,ty,'\u2022','left',C.text);}
+    head.forEach(function(ln){sf(boldLabel?'bold':'normal',8.7);tx(ML+(boldLabel?2.6:5.4),ty,ln,'left',C.text);ty+=4.4;});
+    dl.forEach(function(ln){sf('normal',8.3);tx(ML+2.6,ty,ln,'left',C.muted);ty+=4.4;});
+    var col=C.muted,vv=value;
+    if(value==='C')col=C.green;else if(value==='NYC')col=C.amber;else if(value==='NA')col=C.muted;
+    else if(!value||value==='\u2014'){vv='\u2014';col=C.muted;}
+    sf('bold',9.5);tx(RX+RW/2,P.y+h/2+1.6,vv||'\u2014','center',col);P.y+=h;
+  };
+  P.commentsBlock=function(title,text){P.titleBand(title);
+    var ls=text?wrap(text,CW-5,'normal',8.6):['','',''];if(!text)ls=['','',''];
+    ls.forEach(function(ln){var h=6.5;P.need(h);cell(ML,P.y,CW,h,C.white,C.grid,0.25);sf('normal',8.6);tx(ML+2.5,P.y+h/2+1.4,ln,'left');P.y+=h;});};
+  P.certRows=function(sentence){wrap(sentence,CW-5,'normal',8.6).forEach(function(ln){var h=6.5;P.need(h);cell(ML,P.y,CW,h,C.white,C.grid,0.25);sf('normal',8.6);tx(ML+2.5,P.y+h/2+1.4,ln,'left');P.y+=h;});};
+  P.sigRow=function(name,date,sigData){
+    var w=[22,46,26,40,18,34],h=16;P.need(h);var x=ML;var content=['Name',name,'Signature','__SIG__','Date',date];
+    for(var i=0;i<6;i++){var isLabel=(i%2===0);
+      cell(x,P.y,w[i],h,isLabel?C.label:C.white,C.grid,0.25);
+      if(isLabel){sf('bold',8.7);tx(x+w[i]/2,P.y+h/2+1.4,content[i],'center');}
+      else if(content[i]==='__SIG__'){if(sigData){try{var iw=w[i]-4,ih=iw*160/600;if(ih>h-4){ih=h-4;iw=ih*600/160;}doc.addImage(sigData,'PNG',x+(w[i]-iw)/2,P.y+(h-ih)/2,iw,ih);}catch(e){}}}
+      else{sf('normal',8.7);tx(x+2,P.y+h/2+1.4,content[i]||'','left');}
+      x+=w[i];}
+    P.y+=h;
+  };
+  P.finish=function(){var total=doc.internal.getNumberOfPages();for(var p=1;p<=total;p++){doc.setPage(p);footer(p,total);}return doc;};
+  header();
+  return P;
 }
+
+function buildPDF(){
+  var P=aeroDoc({title:'Operator Proficiency Check',footerLeft:'31 January 2024',arn:v('arn')});
+  var name=v('trainee-name')||'';
+  var ttype=v('training-type')||'';
+  var acReg=v('aircraft-reg')||'';
+  var gTime=v('ground-time')||'';
+  var fTime=v('flight-time')||'';
+  var ac=Array.prototype.slice.call(document.querySelectorAll('[data-check]'));
+  function cv(i){return (ac[i]&&ac[i].value)||'';}
+
+  P.titleBand('Operator Proficiency Check');
+  P.infoAircraft(name||'\u00A0', aircraft);
+  P.kvRow([['Aircraft Registration',42,acReg||'\u00A0',144]]);
+  P.kvRow([['Ground Time',42,gTime||'\u00A0',51],['Flight Time',42,fTime||'\u00A0',51]]);
+  P.vspace(3);
+  P.caption('Initial or recurrent: '+(ttype||'\u2014'));
+  P.checkHeader();
+  [['Fatigue management limitations - CAO 48.1',cv(0),0],
+   ['Company operations manual - Operations Manual',cv(1),0],
+   ['Knowledge Requirements',null,1],
+   ['IFR / VFR knowledge requirements - privileges and limitations',cv(2),0],
+   ['IFR / VFR knowledge requirements - proficiency check requirements',cv(3),0],
+   ['IFR / VFR knowledge requirements - IFR and approach recency requirements',cv(4),0],
+   ['IFR / VFR knowledge requirements - interpreting operational and meteorological information',cv(5),0],
+   ['IFR / VFR knowledge requirements - application of takeoff minima',cv(6),0],
+   ['IFR / VFR knowledge requirements - alternate / holding requirements',cv(7),0],
+   ['IFR / VFR knowledge requirements - IFR or VFR procedures for all airspace categories',cv(8),0],
+   ['IFR / VFR knowledge requirements - departure and approach instrument procedures',cv(9),0],
+   ['IFR / VFR knowledge requirements - operations below LSALT / MSA for day and night operations',cv(10),0],
+   ['IFR / VFR knowledge requirements - GNSS and PBN standards',cv(11),0],
+   ['IFR / VFR knowledge requirements - requirements for circling approaches',cv(12),0],
+   ['IFR / VFR knowledge requirements - adverse weather conditions',cv(13),0],
+   ['IFR / VFR knowledge requirements - IFR planning or VFR planning',cv(14),0],
+   ['Flight Component',null,1],
+   ['Pre-flight - flight planning accurate and complete',cv(15),0],
+   ['Pre-flight - performance knowledge and application',cv(16),0],
+   ['Pre-flight - perform pre-flight actions and procedures',cv(17),0],
+   ['Ground operations, take-off, departure and climb - complete all relevant checks and procedures',cv(18),0],
+   ['Ground operations, take-off, departure and climb - plan, brief and conduct take-off and departure procedures',cv(19),0],
+   ['Ground operations, take-off, departure and climb - conduct instrument departure',cv(20),0],
+   ['Ground operations, take-off, departure and climb - conduct an engine failure below turnback height',cv(21),0],
+   ['Ground operations, take-off, departure and climb - conduct an engine failure above turnback height',cv(22),0],
+   ['Enroute cruise - navigate aircraft enroute using ground and satellite navigation systems',cv(23),0],
+   ['Enroute cruise - perform navigation systems integrity checks',cv(24),0],
+   ['Enroute cruise - identify and avoid hazardous weather',cv(25),0],
+   ['Enroute cruise - use correct radio procedures',cv(26),0],
+   ['Enroute cruise - manage relevant aircraft systems',cv(27),0],
+   ['Enroute cruise - manage fuel system and monitor fuel plan and usage',cv(28),0],
+   ['Enroute cruise - conduct glide approach to landing',cv(29),0],
+   ['Activities and manoeuvres - perform full and limited panel instrument flying',cv(30),0],
+   ['Activities and manoeuvres - unusual attitude recovery',cv(31),0],
+   ['Activities and manoeuvres - engine failure drill',cv(32),0],
+   ['Activities and manoeuvres - general aircraft handling',cv(33),0],
+   ['Descent and arrival - perform a descent or published arrival procedure to the aerodrome',cv(34),0],
+   ['Descent and arrival - track to the holding fix and conduct holding pattern or sector entry',cv(35),0],
+   ['2D approach - prepare for the approach',cv(36),0],
+   ['2D approach - conduct approach',cv(37),0],
+   ['2D approach - conduct missed approach',cv(38),0],
+   ['3D approach - prepare for the approach',cv(39),0],
+   ['3D approach - conduct approach',cv(40),0],
+   ['3D approach - conduct missed approach',cv(41),0],
+   ['Circuit, approach and landing - conduct visual circling with at least 90-degree heading change',cv(42),0],
+   ['Circuit, approach and landing - approach stable IAW company procedures',cv(43),0],
+   ['Circuit, approach and landing - perform after landing actions and procedures',cv(44),0],
+   ['Shutdown and post flight - park, shutdown and complete post-flight administration',cv(45),0],
+   ['Emergency Procedures',null,1],
+   ['Emergency procedures - engines, propeller, and fuel',cv(46),0],
+   ['Emergency procedures - electrical',cv(47),0],
+   ['Emergency procedures - fire or smoke',cv(48),0],
+   ['Emergency procedures - flight controls and stall warning',cv(49),0],
+   ['Emergency procedures - navigation and flight instruments',cv(50),0],
+   ['Emergency procedures - passenger evacuation and emergency landings',cv(51),0],
+   ['Emergency procedures - cabin or cargo door warning',cv(52),0],
+   ['Emergency procedures - abnormal and emergency passenger PAs',cv(53),0],
+   ['Non-Technical Skills',null,1],
+   ['Non-technical skills assessment - communication',cv(54),0],
+   ['Non-technical skills assessment - situational awareness',cv(55),0],
+   ['Non-technical skills assessment - threat and error management',cv(56),0],
+   ['Non-technical skills assessment - decision making',cv(57),0],
+   ['Non-technical skills assessment - workload management',cv(58),0],
+   ['Non-technical skills assessment - task management',cv(59),0],
+   ['Non-technical skills assessment - monitoring and cross-checking',cv(60),0],
+   ['Non-technical skills assessment - fatigue management',cv(61),0]
+  ].forEach(function(r){if(r[2])P.subRow(r[0]);else P.itemRow(r[0],r[1]);});
+  P.vspace(3);
+  P.commentsBlock('Comments', v('comments'));
+  P.vspace(4);
+  P.titleBand('Operator Proficiency Check Completion Report');
+  P.kvRow([['Name',26,name||'\u00A0',160]]);
+  P.certRows('This is to certify that the above-named person has completed the operator proficiency check for Part 135/138 operations.');
+  P.subRow('Check Pilot certification');
+  P.sigRow(v('inst-name'), v('inst-date'), getSig('inst'));
+  P.subRow('Candidate acknowledgement');
+  P.sigRow(v('ts-name'), v('ts-date'), getSig('ts'));
+  return P.finish();
+}
+
 
 function exportPDF(){
   var name=v('trainee-name')||'Unknown';
